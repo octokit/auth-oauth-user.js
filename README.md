@@ -572,6 +572,11 @@ There are three possible results
 1. [GitHub APP user authentication token with expiring disabled](#github-app-user-authentication-token-with-expiring-disabled)
 1. [GitHub APP user authentication token with expiring enabled](#github-app-user-authentication-token-with-expiring-enabled)
 
+The differences are
+
+1. `scopes` is only present for OAuth Apps
+2. `refreshToken`, `expiresAt`, `refreshTokenExpiresAt` are only present for GitHub Apps, and only if token expiration is enabled
+
 ### OAuth APP authentication token
 
 <table width="100%">
@@ -755,6 +760,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
 Either `undefined` or `true`. Will be set to `true` if the token was invalided explicitly or found to be invalid
 
 </td>
+
   </tbody>
 </table>
 
@@ -875,6 +881,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
 Either `undefined` or `true`. Will be set to `true` if the token was invalided explicitly or found to be invalid
 
 </td>
+    </tr>
   </tbody>
 </table>
 
