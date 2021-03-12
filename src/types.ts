@@ -1,5 +1,7 @@
 import * as OctokitTypes from "@octokit/types";
 
+export type ClientType = "oauth-app" | "github-app";
+
 export type StrategyOptions = {
   clientId: string;
   clientSecret: string;
@@ -9,7 +11,8 @@ export type StrategyOptions = {
   request?: OctokitTypes.RequestInterface;
 };
 export type AuthOptions = any;
-export type Authentication = {
+
+export type OAuthAppAuthetication = {
   type: "token";
   tokenType: "oauth";
   clientType: "oauth-app";
@@ -17,6 +20,16 @@ export type Authentication = {
   token: string;
   scopes: string[];
 };
+
+export type GitHubAppAuthetication = {
+  type: "token";
+  tokenType: "oauth";
+  clientType: "github-app";
+  clientId: string;
+  token: string;
+};
+
+export type Authentication = OAuthAppAuthetication | GitHubAppAuthetication;
 
 export type StrategyInterface = OctokitTypes.StrategyInterface<
   [StrategyOptions],
@@ -26,4 +39,5 @@ export type StrategyInterface = OctokitTypes.StrategyInterface<
 
 export type State = StrategyOptions & {
   request: OctokitTypes.RequestInterface;
+  clientType: ClientType;
 };
