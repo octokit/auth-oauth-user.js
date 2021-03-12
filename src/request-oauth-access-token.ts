@@ -1,7 +1,7 @@
 import { RequestError } from "@octokit/request-error";
 
 import { OctokitResponse } from "@octokit/types";
-import { State } from "./types";
+import { WebFlowState } from "./types";
 
 type OAuthResponseDataForOAuthApps = {
   access_token: string;
@@ -21,6 +21,12 @@ type OAuthResponseDataForGitHubAppsWithExpiration = {
   expires_in: number;
   refresh_token: string;
   refresh_token_expires_in: number;
+};
+
+type ErrorResponseData = {
+  error: string;
+  error_description: string;
+  error_url: string;
 };
 
 type OAuthResponseData =
@@ -45,7 +51,7 @@ type OAuthResponseData =
  * @returns normalized authentication object
  */
 export async function requestOAuthAccessToken(
-  state: State
+  state: WebFlowState
 ): Promise<OctokitResponse<OAuthResponseData, 200>> {
   // normalize request URL
   const route = /^https:\/\/(api\.)?github\.com$/.test(
@@ -71,10 +77,13 @@ export async function requestOAuthAccessToken(
     state: state.state,
   };
 
-  const response = await request(route, parameters);
+  const response = (await request(route, parameters)) as OctokitResponse<
+    ErrorResponseData | OAuthResponseData,
+    200
+  >;
 
   // (2.) handle errors by looking at response body
-  if (response.data.error !== undefined) {
+  if ("error" in response.data) {
     throw new RequestError(
       `${response.data.error_description} (${response.data.error})`,
       response.status,
@@ -85,5 +94,5 @@ export async function requestOAuthAccessToken(
     );
   }
 
-  return response;
+  return response as OctokitResponse<OAuthResponseData, 200>;
 }

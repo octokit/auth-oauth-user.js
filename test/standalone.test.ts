@@ -174,3 +174,80 @@ describe("Exchange code from OAuth web flow", () => {
     });
   });
 });
+
+describe("OAuth device flow", () => {
+  test("README example", async () => {
+    const mock = fetchMock
+      .sandbox()
+
+      .postOnce(
+        "https://github.com/login/device/code",
+        {
+          device_code: "devicecode123",
+          user_code: "usercode123",
+          verification_uri: "https://github.com/login/device",
+          expires_in: 900,
+          // use low number because jest.useFakeTimers() & jest.runAllTimers() didn't work for me
+          interval: 0.005,
+        },
+        {
+          headers: {
+            accept: "application/json",
+            "user-agent": "test",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: {
+            client_id: "123",
+            scope: "",
+          },
+        }
+      )
+      .postOnce(
+        "https://github.com/login/oauth/access_token",
+        {
+          access_token: "token123",
+          scope: "",
+        },
+        {
+          headers: {
+            accept: "application/json",
+            "user-agent": "test",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: {
+            client_id: "123",
+            device_code: "devicecode123",
+            grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+          },
+          overwriteRoutes: false,
+        }
+      );
+
+    const onVerification = jest.fn();
+    const auth = createOAuthUserAuth({
+      clientId: "123",
+      clientSecret: "secret",
+      onVerification,
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    const authentication = await auth();
+
+    expect(authentication).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "oauth-app",
+      clientId: "123",
+      token: "token123",
+      scopes: [],
+    });
+  });
+});
