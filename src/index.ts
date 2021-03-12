@@ -6,12 +6,6 @@ import { auth } from "./auth";
 import { hook } from "./hook";
 import { StrategyOptions, StrategyInterface, State } from "./types";
 
-export type Types = {
-  StrategyOptions: any;
-  AuthOptions: any;
-  Authentication: any;
-};
-
 export const createOAuthUserAuth: StrategyInterface = function createOAuthUserAuth(
   options: StrategyOptions
 ) {
