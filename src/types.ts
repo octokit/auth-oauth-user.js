@@ -12,7 +12,7 @@ export type StrategyOptions = {
 };
 export type AuthOptions = any;
 
-export type OAuthAppAuthetication = {
+export type OAuthAppAuthentication = {
   type: "token";
   tokenType: "oauth";
   clientType: "oauth-app";
@@ -21,7 +21,7 @@ export type OAuthAppAuthetication = {
   scopes: string[];
 };
 
-export type GitHubAppAuthetication = {
+export type GitHubAppAuthentication = {
   type: "token";
   tokenType: "oauth";
   clientType: "github-app";
@@ -29,7 +29,21 @@ export type GitHubAppAuthetication = {
   token: string;
 };
 
-export type Authentication = OAuthAppAuthetication | GitHubAppAuthetication;
+export type GitHubAppAuthenticationWithExpiration = {
+  type: "token";
+  tokenType: "oauth";
+  clientType: "github-app";
+  clientId: string;
+  token: string;
+  refreshToken: string;
+  expiresAt: string;
+  refreshTokenExpiresAt: string;
+};
+
+export type Authentication =
+  | OAuthAppAuthentication
+  | GitHubAppAuthentication
+  | GitHubAppAuthenticationWithExpiration;
 
 export type StrategyInterface = OctokitTypes.StrategyInterface<
   [StrategyOptions],
