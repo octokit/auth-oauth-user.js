@@ -249,5 +249,37 @@ describe("OAuth device flow", () => {
       token: "token123",
       scopes: [],
     });
+
+    expect(onVerification).toHaveBeenCalledWith({
+      device_code: "devicecode123",
+      expires_in: 900,
+      interval: 0.005,
+      user_code: "usercode123",
+      verification_uri: "https://github.com/login/device",
+    });
+  });
+});
+
+describe("Use existing authentication", () => {
+  test("README example", async () => {
+    const auth = createOAuthUserAuth({
+      clientId: "123",
+      clientSecret: "secret",
+      clientType: "oauth-app",
+      token: "token123",
+      scopes: [],
+    });
+
+    // will return the passed authentication
+    const authentication = await auth();
+
+    expect(authentication).toEqual({
+      clientId: "123",
+      clientType: "oauth-app",
+      scopes: [],
+      token: "token123",
+      tokenType: "oauth",
+      type: "token",
+    });
   });
 });

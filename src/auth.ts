@@ -9,8 +9,13 @@ function toTimestamp(apiTimeInMs: number, expirationInSeconds: number) {
 
 export async function auth(state: State): Promise<Authentication> {
   // handle code exchange form OAuth Web Flow
-  if ("code" in state) {
-    const { data, headers } = await requestOAuthAccessToken(state);
+  if ("code" in state.strategyOptions) {
+    const { data, headers } = await requestOAuthAccessToken(
+      state.request,
+      state.clientId,
+      state.clientSecret,
+      state.strategyOptions
+    );
 
     if (state.clientType === "oauth-app") {
       return {
@@ -51,15 +56,24 @@ export async function auth(state: State): Promise<Authentication> {
   }
 
   // handle OAuth device flow
-  if ("onVerification" in state) {
+  if ("onVerification" in state.strategyOptions) {
     const deviceAuth = createOAuthDeviceAuth({
       clientId: state.clientId,
-      onVerification: state.onVerification,
+      onVerification: state.strategyOptions.onVerification,
       request: state.request,
     });
 
     return await deviceAuth({ type: "oauth" });
   }
 
-  throw new Error("Not yet implemented");
+  if ("token" in state.strategyOptions) {
+    return {
+      type: "token",
+      tokenType: "oauth",
+      clientId: state.clientId,
+      ...state.strategyOptions,
+    };
+  }
+
+  throw new Error("[@octokit/auth-oauth-user] Invalid strategy options");
 }

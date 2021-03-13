@@ -1,7 +1,7 @@
 import { RequestError } from "@octokit/request-error";
 
-import { OctokitResponse } from "@octokit/types";
-import { WebFlowState } from "./types";
+import { OctokitResponse, RequestInterface } from "@octokit/types";
+import { WebFlowOptions } from "./types";
 
 type OAuthResponseDataForOAuthApps = {
   access_token: string;
@@ -51,30 +51,31 @@ type OAuthResponseData =
  * @returns normalized authentication object
  */
 export async function requestOAuthAccessToken(
-  state: WebFlowState
+  request: RequestInterface,
+  clientId: string,
+  clientSecret: string,
+  { code, state, redirectUrl }: WebFlowOptions
 ): Promise<OctokitResponse<OAuthResponseData, 200>> {
   // normalize request URL
   const route = /^https:\/\/(api\.)?github\.com$/.test(
-    state.request.endpoint.DEFAULTS.baseUrl
+    request.endpoint.DEFAULTS.baseUrl
   )
     ? "POST https://github.com/login/oauth/access_token"
-    : `POST ${state.request.endpoint.DEFAULTS.baseUrl.replace(
+    : `POST ${request.endpoint.DEFAULTS.baseUrl.replace(
         "/api/v3",
         "/login/oauth/access_token"
       )}`;
-
-  const request = state.request;
 
   // (3. & 4.) compile request parameter with explict accept header
   const parameters = {
     headers: {
       accept: "application/json",
     },
-    client_id: state.clientId,
-    client_secret: state.clientSecret,
-    code: state.code,
-    redirect_uri: state.redirectUrl,
-    state: state.state,
+    client_id: clientId,
+    client_secret: clientSecret,
+    code: code,
+    redirect_uri: redirectUrl,
+    state: state,
   };
 
   const response = (await request(route, parameters)) as OctokitResponse<

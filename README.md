@@ -132,18 +132,15 @@ About [GitHub's OAuth device flow](https://docs.github.com/en/developers/apps/au
 const auth = createOAuthUserAuth({
   clientId: "123",
   clientSecret: "secret",
+  clientType: "oauth-app",
   token: "token123",
-  // only relevant for OAuth Apps
-  scopes: [],
-  // only relevant for GitHub Apps
-  refreshToken: "r1.refreshtoken123",
-  expiresAt: "2022-01-01T08:00:0.000Z",
-  refreshTokenExpiresAt: "2021-07-01T00:00:0.000Z",
 });
 
 // will return the passed authentication
 const { token } = await auth();
 ```
+
+See [Authentication object](#authentication-object).
 
 ## Usage with Octokit
 
@@ -439,6 +436,17 @@ createOAuthAppAuth({
     </tr>
     <tr>
       <th>
+        <code>clientType</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        <strong>Required</strong>. Must be set to <code>"oauth-app"</code> or <code>"github"</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>token</code>
       </th>
       <th>
@@ -456,7 +464,7 @@ createOAuthAppAuth({
         <code>array of strings</code>
       </th>
       <td>
-        <strong>Required if token was created by an OAuth App</strong>. Array of OAuth scope names the token was granted
+        <strong>Required if <code>clientType</code> is set to <code>"oauth-app"</code></strong>. Array of OAuth scope names the token was granted
       </td>
     </tr>
     <tr>
@@ -467,7 +475,7 @@ createOAuthAppAuth({
         <code>string</code>
       </th>
       <td>
-        Only relevant if token was created by a GitHub App and token expiration is enabled.
+        Only relevant if <code>clientType</code> is set to <code>"github-app"</code> and token expiration is enabled.
       </td>
     </tr>
     <tr>
@@ -478,7 +486,7 @@ createOAuthAppAuth({
         <code>string</code>
       </th>
       <td>
-        Only relevant if token was created by a GitHub App and token expiration is enabled. Date timestamp in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString">ISO 8601</a> standard. Example: <code>2022-01-01T08:00:0.000Z</code>
+        Only relevant if <code>clientType</code> is set to <code>"github-app"</code> and token expiration is enabled. Date timestamp in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString">ISO 8601</a> standard. Example: <code>2022-01-01T08:00:0.000Z</code>
       </td>
     </tr>
     </tr>
@@ -490,7 +498,7 @@ createOAuthAppAuth({
         <code>string</code>
       </th>
       <td>
-        Only relevant if token was created by a GitHub App and token expiration is enabled. Date timestamp in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString">ISO 8601</a> standard. Example: <code>2021-07-01T00:00:0.000Z</code>
+        Only relevant if <code>clientType</code> is set to <code>"github-app"</code> and token expiration is enabled. Date timestamp in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString">ISO 8601</a> standard. Example: <code>2021-07-01T00:00:0.000Z</code>
       </td>
     </tr>
     <tr>

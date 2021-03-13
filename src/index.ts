@@ -9,15 +9,26 @@ import { StrategyOptions, StrategyInterface, State, ClientType } from "./types";
 export const createOAuthUserAuth: StrategyInterface = function createOAuthUserAuth(
   options: StrategyOptions
 ) {
+  const {
+    clientId,
+    clientSecret,
+    request: localRequest,
+    ...strategyOptions
+  } = options;
+
   const state: State = Object.assign(
     {
-      request: request.defaults({
-        headers: {
-          "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
-        },
-      }),
+      clientId,
+      clientSecret,
+      strategyOptions,
+      request:
+        localRequest ||
+        request.defaults({
+          headers: {
+            "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
+          },
+        }),
     },
-    options,
     {
       // Only Client IDs belonging to GitHub Apps have a "lv1." prefix
       // To be more future proof, we only check for the existense of the "."
