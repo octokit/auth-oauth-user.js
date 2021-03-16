@@ -47,8 +47,6 @@ describe("Exchange code from OAuth web flow", () => {
 
     const authentication = await auth();
 
-    console.log(authentication.clientType);
-
     expect(authentication).toEqual({
       type: "token",
       tokenType: "oauth",
@@ -265,9 +263,9 @@ describe("OAuth device flow", () => {
 describe("Use existing authentication", () => {
   test("README example", async () => {
     const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
       clientId: "1234567890abcdef1234",
       clientSecret: "secret",
-      clientType: "oauth-app",
       token: "token123",
       scopes: [],
     });

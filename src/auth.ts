@@ -1,13 +1,15 @@
 import { createOAuthDeviceAuth } from "@octokit/auth-oauth-device";
 
-import { Authentication, State } from "./types";
+import { Authentication, State, ClientType } from "./types";
 import { requestOAuthAccessToken } from "./request-oauth-access-token";
 
 function toTimestamp(apiTimeInMs: number, expirationInSeconds: number) {
   return new Date(apiTimeInMs + expirationInSeconds * 1000).toISOString();
 }
 
-export async function auth(state: State): Promise<Authentication> {
+export async function auth<TClientType extends ClientType>(
+  state: State
+): Promise<Authentication<TClientType>> {
   // handle code exchange form OAuth Web Flow
   if ("code" in state.strategyOptions) {
     const { data, headers } = await requestOAuthAccessToken(
@@ -25,7 +27,7 @@ export async function auth(state: State): Promise<Authentication> {
         clientId: state.clientId,
         token: data.access_token,
         scopes: data.scope.split(/,\s*/).filter(Boolean),
-      };
+      } as Authentication<TClientType>;
     }
 
     if ("refresh_token" in data) {
@@ -43,7 +45,7 @@ export async function auth(state: State): Promise<Authentication> {
           apiTimeInMs,
           data.refresh_token_expires_in
         ),
-      };
+      } as Authentication<TClientType>;
     }
 
     return {
@@ -52,20 +54,35 @@ export async function auth(state: State): Promise<Authentication> {
       clientType: "github-app",
       clientId: state.clientId,
       token: data.access_token,
-    };
+    } as Authentication<TClientType>;
   }
 
   // handle OAuth device flow
   if ("onVerification" in state.strategyOptions) {
-    const deviceAuth = createOAuthDeviceAuth({
-      clientId: state.clientId,
-      onVerification: state.strategyOptions.onVerification,
-      request: state.request,
-    });
+    // TODO: shorten the code below while keeping typescript happy
+    const deviceAuth =
+      state.clientType === "oauth-app"
+        ? createOAuthDeviceAuth<"oauth-app">({
+            clientType: "oauth-app",
+            clientId: state.clientId,
+            onVerification: state.strategyOptions.onVerification,
+            scopes: state.strategyOptions.scopes,
+            request: state.request,
+          })
+        : createOAuthDeviceAuth<"github-app">({
+            clientType: "github-app",
+            clientId: state.clientId,
+            onVerification: state.strategyOptions.onVerification,
+            request: state.request,
+          });
 
-    return await deviceAuth({ type: "oauth" });
+    const authentication = await deviceAuth({
+      type: "oauth",
+    });
+    return authentication as Authentication<TClientType>;
   }
 
+  // use existing authentication
   if ("token" in state.strategyOptions) {
     return {
       type: "token",
@@ -73,7 +90,7 @@ export async function auth(state: State): Promise<Authentication> {
       clientId: state.clientId,
       clientType: state.clientType,
       ...state.strategyOptions,
-    } as Authentication;
+    } as Authentication<TClientType>;
   }
 
   throw new Error("[@octokit/auth-oauth-user] Invalid strategy options");
