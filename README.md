@@ -240,6 +240,17 @@ The `createOAuthUserAuth` method accepts a single `options` object as argument. 
     </tr>
     <tr>
       <th>
+        <code>clientType</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        Either <code>"oauth-app"</code> or <code>"github-app"</code>. Defaults to <code>"oauth-app"</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>code</code>
       </th>
       <th>
@@ -344,6 +355,17 @@ createOAuthAppAuth({
     </tr>
     <tr>
       <th>
+        <code>clientType</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        Either <code>"oauth-app"</code> or <code>"github-app"</code>. Defaults to <code>"oauth-app"</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>onVerification</code>
       </th>
       <th>
@@ -414,6 +436,17 @@ createOAuthAppAuth({
   <tbody align=left valign=top>
     <tr>
       <th>
+        <code>clientType</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        <strong>Required</strong>. Either <code>"oauth-app"</code> or <code>"github"</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>clientId</code>
       </th>
       <th>
@@ -432,17 +465,6 @@ createOAuthAppAuth({
       </th>
       <td>
         <strong>Required</strong>. Client Secret for your GitHub/OAuth App. Create one on your app's settings page.
-      </td>
-    </tr>
-    <tr>
-      <th>
-        <code>clientType</code>
-      </th>
-      <th>
-        <code>string</code>
-      </th>
-      <td>
-        Must be set to <code>"oauth-app"</code> or <code>"github"</code>. Defaults to <code>"oauth-app"</code>.
       </td>
     </tr>
     <tr>
