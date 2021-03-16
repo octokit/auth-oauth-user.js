@@ -4,7 +4,7 @@ import { request } from "@octokit/request";
 import { VERSION } from "./version";
 import { auth } from "./auth";
 import { hook } from "./hook";
-import { StrategyOptions, StrategyInterface, State, ClientType } from "./types";
+import { StrategyOptions, StrategyInterface, State } from "./types";
 
 export const createOAuthUserAuth: StrategyInterface = function createOAuthUserAuth(
   options: StrategyOptions
@@ -12,31 +12,24 @@ export const createOAuthUserAuth: StrategyInterface = function createOAuthUserAu
   const {
     clientId,
     clientSecret,
+    clientType = "oauth-app",
     request: localRequest,
     ...strategyOptions
   } = options;
 
-  const state: State = Object.assign(
-    {
-      clientId,
-      clientSecret,
-      strategyOptions,
-      request:
-        localRequest ||
-        request.defaults({
-          headers: {
-            "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
-          },
-        }),
-    },
-    {
-      // Only Client IDs belonging to GitHub Apps have a "lv1." prefix
-      // To be more future proof, we only check for the existense of the "."
-      clientType: /\./.test(options.clientId)
-        ? "github-app"
-        : ("oauth-app" as ClientType),
-    }
-  );
+  const state: State = Object.assign({
+    clientType,
+    clientId,
+    clientSecret,
+    strategyOptions,
+    request:
+      localRequest ||
+      request.defaults({
+        headers: {
+          "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
+        },
+      }),
+  });
 
   return Object.assign(auth.bind(null, state), {
     hook: hook.bind(null, state),

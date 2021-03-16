@@ -71,8 +71,9 @@ export async function auth(state: State): Promise<Authentication> {
       type: "token",
       tokenType: "oauth",
       clientId: state.clientId,
+      clientType: state.clientType,
       ...state.strategyOptions,
-    };
+    } as Authentication;
   }
 
   throw new Error("[@octokit/auth-oauth-user] Invalid strategy options");

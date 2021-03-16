@@ -4,6 +4,7 @@ import * as DeviceTypes from "@octokit/auth-oauth-device";
 export type ClientType = "oauth-app" | "github-app";
 
 type CommonStrategyOptions = {
+  clientType?: ClientType;
   clientId: string;
   clientSecret: string;
   request?: OctokitTypes.RequestInterface;
@@ -19,16 +20,13 @@ type DeviceFlowOptions = {
   onVerification: DeviceTypes.StrategyOptions["onVerification"];
 };
 type ExistingOAuthAppAuthenticationOptions = {
-  clientType: "oauth-app";
   token: string;
   scopes: string[];
 };
 type ExistingGitHubAppAuthenticationOptions = {
-  clientType: "github-app";
   token: string;
 };
 type ExistingGitHubAppAuthenticationWithExpirationOptions = {
-  clientType: "github-app";
   token: string;
   refreshToken: string;
   expiresAt: string;
@@ -65,18 +63,30 @@ export type StrategyInterface = OctokitTypes.StrategyInterface<
   Authentication
 > & { VERSION: string };
 
-export type State = {
+type OAuthAppState = {
   clientId: string;
   clientSecret: string;
-  clientType: ClientType;
+  clientType: "oauth-app";
   request: OctokitTypes.RequestInterface;
   strategyOptions:
     | WebFlowOptions
     | DeviceFlowOptions
-    | ExistingOAuthAppAuthenticationOptions
+    | ExistingOAuthAppAuthenticationOptions;
+};
+
+type GitHubAppState = {
+  clientId: string;
+  clientSecret: string;
+  clientType: "github-app";
+  request: OctokitTypes.RequestInterface;
+  strategyOptions:
+    | WebFlowOptions
+    | DeviceFlowOptions
     | ExistingGitHubAppAuthenticationOptions
     | ExistingGitHubAppAuthenticationWithExpirationOptions;
 };
+
+export type State = OAuthAppState | GitHubAppState;
 
 export type WebFlowState = {
   clientId: string;

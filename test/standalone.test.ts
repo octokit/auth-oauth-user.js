@@ -19,7 +19,7 @@ describe("Exchange code from OAuth web flow", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: {
-          client_id: "123",
+          client_id: "1234567890abcdef1234",
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
@@ -29,7 +29,7 @@ describe("Exchange code from OAuth web flow", () => {
     );
 
     const auth = createOAuthUserAuth({
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       clientSecret: "secret",
       code: "code123",
       state: "state123",
@@ -47,11 +47,13 @@ describe("Exchange code from OAuth web flow", () => {
 
     const authentication = await auth();
 
+    console.log(authentication.clientType);
+
     expect(authentication).toEqual({
       type: "token",
       tokenType: "oauth",
       clientType: "oauth-app",
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       token: "token123",
       scopes: [],
     });
@@ -72,7 +74,7 @@ describe("Exchange code from OAuth web flow", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: {
-          client_id: "lv1.123",
+          client_id: "lv1.1234567890abcdef",
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
@@ -82,8 +84,8 @@ describe("Exchange code from OAuth web flow", () => {
     );
 
     const auth = createOAuthUserAuth({
-      // The "lv1." prefix exists only for GitHub Apps
-      clientId: "lv1.123",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
       clientSecret: "secret",
       code: "code123",
       state: "state123",
@@ -105,7 +107,7 @@ describe("Exchange code from OAuth web flow", () => {
       type: "token",
       tokenType: "oauth",
       clientType: "github-app",
-      clientId: "lv1.123",
+      clientId: "lv1.1234567890abcdef",
       token: "token123",
     });
   });
@@ -133,7 +135,7 @@ describe("Exchange code from OAuth web flow", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: {
-          client_id: "lv1.123",
+          client_id: "lv1.1234567890abcdef",
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
@@ -143,8 +145,8 @@ describe("Exchange code from OAuth web flow", () => {
     );
 
     const auth = createOAuthUserAuth({
-      // The "lv1." prefix exists only for GitHub Apps
-      clientId: "lv1.123",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
       clientSecret: "secret",
       code: "code123",
       state: "state123",
@@ -166,7 +168,7 @@ describe("Exchange code from OAuth web flow", () => {
       type: "token",
       tokenType: "oauth",
       clientType: "github-app",
-      clientId: "lv1.123",
+      clientId: "lv1.1234567890abcdef",
       token: "token123",
       expiresAt: "1970-01-01T08:00:00.000Z",
       refreshToken: "r1.token123",
@@ -197,7 +199,7 @@ describe("OAuth device flow", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: {
-            client_id: "123",
+            client_id: "1234567890abcdef1234",
             scope: "",
           },
         }
@@ -215,7 +217,7 @@ describe("OAuth device flow", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: {
-            client_id: "123",
+            client_id: "1234567890abcdef1234",
             device_code: "devicecode123",
             grant_type: "urn:ietf:params:oauth:grant-type:device_code",
           },
@@ -225,7 +227,7 @@ describe("OAuth device flow", () => {
 
     const onVerification = jest.fn();
     const auth = createOAuthUserAuth({
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       clientSecret: "secret",
       onVerification,
       // pass request mock for testing
@@ -245,7 +247,7 @@ describe("OAuth device flow", () => {
       type: "token",
       tokenType: "oauth",
       clientType: "oauth-app",
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       token: "token123",
       scopes: [],
     });
@@ -263,7 +265,7 @@ describe("OAuth device flow", () => {
 describe("Use existing authentication", () => {
   test("README example", async () => {
     const auth = createOAuthUserAuth({
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       clientSecret: "secret",
       clientType: "oauth-app",
       token: "token123",
@@ -274,7 +276,7 @@ describe("Use existing authentication", () => {
     const authentication = await auth();
 
     expect(authentication).toEqual({
-      clientId: "123",
+      clientId: "1234567890abcdef1234",
       clientType: "oauth-app",
       scopes: [],
       token: "token123",
