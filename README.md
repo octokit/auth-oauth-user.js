@@ -84,7 +84,7 @@ const { createOAuthUserAuth } = require("@octokit/auth-oauth-user");
 
 ```js
 const auth = createOAuthUserAuth({
-  clientId: "123",
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   code: "code123",
   // optional
@@ -103,7 +103,7 @@ About [GitHub's OAuth web flow](https://docs.github.com/en/developers/apps/autho
 
 ```js
 const auth = createOAuthUserAuth({
-  clientId: "123",
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   onVerification(verification) {
     // verification example
@@ -130,7 +130,7 @@ About [GitHub's OAuth device flow](https://docs.github.com/en/developers/apps/au
 
 ```js
 const auth = createOAuthUserAuth({
-  clientId: "123",
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   clientType: "oauth-app",
   token: "token123",
@@ -183,7 +183,7 @@ const { createOAuthUserAuth } = require("@octokit/auth-oauth-user");
 const octokit = new Octokit({
   authStrategy: createOAuthUserAuth,
   auth: {
-    clientId: "123",
+    clientId: "1234567890abcdef1234",
     clientSecret: "secret",
     code: "code123",
   },
@@ -290,7 +290,7 @@ The <code>redirect_uri</code> parameter you provided in [Step 1 of GitHub's OAut
 ```js
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
-  clientId: 123,
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
@@ -357,7 +357,7 @@ The `onVerification()` callback can be used to pause until the user completes st
 
 ```js
 const auth = createOAuthDeviceAuth({
-  clientId: "123",
+  clientId: "1234567890abcdef1234",
   onVerification(verification) {
     console.log("Open %s", verification.verification_uri);
     console.log("Enter code: %s", verification.user_code);
@@ -382,7 +382,7 @@ const auth = createOAuthDeviceAuth({
 ```js
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
-  clientId: 123,
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
@@ -442,7 +442,7 @@ createOAuthAppAuth({
         <code>string</code>
       </th>
       <td>
-        <strong>Required</strong>. Must be set to <code>"oauth-app"</code> or <code>"github"</code>.
+        Must be set to <code>"oauth-app"</code> or <code>"github"</code>. Defaults to <code>"oauth-app"</code>.
       </td>
     </tr>
     <tr>
@@ -514,7 +514,7 @@ createOAuthAppAuth({
 ```js
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
-  clientId: 123,
+  clientId: "1234567890abcdef1234",
   clientSecret: "secret",
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
