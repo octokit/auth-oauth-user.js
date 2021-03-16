@@ -572,7 +572,7 @@ Resolves with an [authentication object](#authentication-object).
   <tbody align=left valign=top>
     <tr>
       <th>
-        <code>option</code>
+        <code>type</code>
       </th>
       <th>
         <code>string</code>
