@@ -1,5 +1,6 @@
 import * as OctokitTypes from "@octokit/types";
 import * as DeviceTypes from "@octokit/auth-oauth-device";
+import * as OAuthMethodsTypes from "@octokit/oauth-methods";
 
 export type ClientType = "oauth-app" | "github-app";
 
@@ -17,7 +18,7 @@ export type WebFlowOptions = {
 };
 
 type DeviceFlowOptions = {
-  onVerification: DeviceTypes.StrategyOptions["onVerification"];
+  onVerification: DeviceTypes.OAuthAppStrategyOptions["onVerification"];
   scopes?: string[];
 };
 type ExistingOAuthAppAuthenticationOptions = {
@@ -76,7 +77,11 @@ export type StrategyOptions<TClientType extends ClientType = "oauth-app"> =
 
 export type Authentication<
   TClientType extends ClientType
-> = DeviceTypes.Authentication<TClientType>;
+> = TClientType extends "oauth-app"
+  ? OAuthMethodsTypes.OAuthAppAuthentication
+  :
+      | OAuthMethodsTypes.GitHubAppAuthentication
+      | OAuthMethodsTypes.GitHubAppAuthenticationWithExpiration;
 
 type OAuthAppState = {
   clientId: string;

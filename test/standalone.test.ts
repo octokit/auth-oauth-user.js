@@ -52,12 +52,13 @@ describe("Exchange code from OAuth web flow", () => {
       tokenType: "oauth",
       clientType: "oauth-app",
       clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
       token: "token123",
       scopes: [],
     });
   });
 
-  test("GitHub App credentials", async () => {
+  test.only("GitHub App credentials", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://github.com/login/oauth/access_token",
       {
@@ -106,6 +107,7 @@ describe("Exchange code from OAuth web flow", () => {
       tokenType: "oauth",
       clientType: "github-app",
       clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
       token: "token123",
     });
   });
@@ -167,6 +169,7 @@ describe("Exchange code from OAuth web flow", () => {
       tokenType: "oauth",
       clientType: "github-app",
       clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
       token: "token123",
       expiresAt: "1970-01-01T08:00:00.000Z",
       refreshToken: "r1.token123",
@@ -246,6 +249,7 @@ describe("OAuth device flow", () => {
       tokenType: "oauth",
       clientType: "oauth-app",
       clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
       token: "token123",
       scopes: [],
     });
@@ -275,6 +279,7 @@ describe("Use existing authentication", () => {
 
     expect(authentication).toEqual({
       clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
       clientType: "oauth-app",
       scopes: [],
       token: "token123",

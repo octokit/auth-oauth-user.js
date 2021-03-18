@@ -677,6 +677,17 @@ The differences are
     </tr>
     <tr>
       <th>
+        <code>clientSecret</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        One of the app's client secrets
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>token</code>
       </th>
       <th>
@@ -776,6 +787,17 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
     </tr>
     <tr>
       <th>
+        <code>clientSecret</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        One of the app's client secrets
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>token</code>
       </th>
       <th>
@@ -860,6 +882,17 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
       </th>
       <td>
         The app's <code>Client ID</code>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>clientSecret</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        One of the app's client secrets
       </td>
     </tr>
     <tr>
