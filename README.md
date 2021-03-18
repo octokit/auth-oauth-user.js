@@ -85,7 +85,7 @@ const { createOAuthUserAuth } = require("@octokit/auth-oauth-user");
 ```js
 const auth = createOAuthUserAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   code: "code123",
   // optional
   state: "state123",
@@ -104,7 +104,7 @@ About [GitHub's OAuth web flow](https://docs.github.com/en/developers/apps/autho
 ```js
 const auth = createOAuthUserAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   onVerification(verification) {
     // verification example
     // {
@@ -131,7 +131,7 @@ About [GitHub's OAuth device flow](https://docs.github.com/en/developers/apps/au
 ```js
 const auth = createOAuthUserAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   clientType: "oauth-app",
   token: "token123",
 });
@@ -184,7 +184,7 @@ const octokit = new Octokit({
   authStrategy: createOAuthUserAuth,
   auth: {
     clientId: "1234567890abcdef1234",
-    clientSecret: "secret",
+    clientSecret: "1234567890abcdef1234567890abcdef12345678",
     code: "code123",
   },
 });
@@ -302,7 +302,7 @@ The <code>redirect_uri</code> parameter you provided in [Step 1 of GitHub's OAut
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
   }),
@@ -378,8 +378,9 @@ createOAuthAppAuth({
 The `onVerification()` callback can be used to pause until the user completes step 2, which might result in a better user experience.
 
 ```js
-const auth = createOAuthDeviceAuth({
+const auth = createOAuthUserAuth({
   clientId: "1234567890abcdef1234",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   onVerification(verification) {
     console.log("Open %s", verification.verification_uri);
     console.log("Enter code: %s", verification.user_code);
@@ -405,7 +406,13 @@ const auth = createOAuthDeviceAuth({
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
+  onVerification(verification) {
+    console.log("Open %s", verification.verification_uri);
+    console.log("Enter code: %s", verification.user_code);
+
+    await prompt("press enter when you are ready to continue")
+  },
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
   }),
@@ -537,7 +544,7 @@ createOAuthAppAuth({
 const { request } = require("@octokit/request");
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
-  clientSecret: "secret",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
   }),
