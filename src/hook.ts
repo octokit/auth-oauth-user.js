@@ -1,11 +1,13 @@
 import {
   EndpointOptions,
+  EndpointDefaults,
   OctokitResponse,
   RequestInterface,
   RequestParameters,
   Route,
 } from "@octokit/types";
 import { State } from "./types";
+import { auth } from "./auth";
 
 type AnyResponse = OctokitResponse<any>;
 
@@ -15,9 +17,16 @@ export async function hook(
   route: Route | EndpointOptions,
   parameters: RequestParameters = {}
 ): Promise<AnyResponse> {
-  console.log("Implement auth.hook()", state);
+  const { token } = await auth({
+    ...state,
+    request,
+  });
 
-  return typeof route === "string"
-    ? request(route, parameters)
-    : request(route);
+  const endpoint = request.endpoint.merge(
+    route as string,
+    parameters
+  ) as EndpointDefaults & { url: string };
+  endpoint.headers.authorization = "token " + token;
+
+  return request(endpoint);
 }

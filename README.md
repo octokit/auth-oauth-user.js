@@ -191,7 +191,9 @@ const octokit = new Octokit({
 
 // Exchanges the code for the user access token authentication on first request
 // and caches the authentication for successive requests
-const { login } = await octokit.request("GET /user");
+const {
+  data: { login },
+} = await octokit.request("GET /user");
 console.log("Hello, %!", login);
 ```
 

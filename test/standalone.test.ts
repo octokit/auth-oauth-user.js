@@ -58,7 +58,7 @@ describe("Exchange code from OAuth web flow", () => {
     });
   });
 
-  test.only("GitHub App credentials", async () => {
+  test("GitHub App credentials", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://github.com/login/oauth/access_token",
       {
@@ -287,4 +287,13 @@ describe("Use existing authentication", () => {
       type: "token",
     });
   });
+});
+
+test("Invalid strategy options", async () => {
+  // @ts-expect-error
+  const auth = createOAuthUserAuth({});
+
+  expect(async () => await auth()).rejects.toThrow(
+    "[@octokit/auth-oauth-user] Invalid strategy options"
+  );
 });
