@@ -152,14 +152,7 @@ Browsers
 
 </th><td width=100%>
 
-Load `@octokit/auth-oauth-user` and [`@octokit/core`](https://github.com/octokit/core.js) (or core-compatible module) directly from [cdn.skypack.dev](https://cdn.skypack.dev)
-
-```html
-<script type="module">
-  import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
-  import { createOAuthUserAuth } from "https://cdn.skypack.dev/@octokit/auth-oauth-user";
-</script>
-```
+`@octokit/auth-oauth-user` cannot be used in the browser. It requires `clientSecret` to be set which must not be exposed to clients, and some of the OAuth APIs it uses do not support CORS.
 
 </td></tr>
 <tr><th>
