@@ -1,11 +1,5 @@
 import { getUserAgent } from "universal-user-agent";
 import { request } from "@octokit/request";
-import {
-  RequestInterface,
-  Route,
-  EndpointOptions,
-  RequestParameters,
-} from "@octokit/types";
 
 import { VERSION } from "./version";
 import { auth } from "./auth";
@@ -37,12 +31,9 @@ export function createOAuthUserAuth<
       }),
   });
 
-  return Object.assign(() => auth<TClientType>(state), {
-    hook: (
-      request: RequestInterface,
-      route: Route | EndpointOptions,
-      parameters: RequestParameters
-    ) => hook(state, request, route, parameters),
+  // @ts-expect-error the extra code is not worth it just to make TS happpy
+  return Object.assign(auth.bind(null, state), {
+    hook: hook.bind(null, state),
   });
 }
 
