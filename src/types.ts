@@ -36,7 +36,7 @@ type ExistingGitHubAppAuthenticationWithExpirationOptions = {
 };
 
 export interface AuthInterface<TClientType extends ClientType> {
-  (): Promise<Authentication<TClientType>>;
+  (options?: AuthOptions): Promise<Authentication<TClientType>>;
 
   hook(
     request: OctokitTypes.RequestInterface,
@@ -93,7 +93,7 @@ type OAuthAppState = {
     | WebFlowOptions
     | DeviceFlowOptions
     | ExistingOAuthAppAuthenticationOptions;
-  authentication?: Authentication<"oauth-app">;
+  authentication?: Authentication<"oauth-app"> & { invalid?: true };
 };
 
 type GitHubAppState = {
@@ -106,7 +106,7 @@ type GitHubAppState = {
     | DeviceFlowOptions
     | ExistingGitHubAppAuthenticationOptions
     | ExistingGitHubAppAuthenticationWithExpirationOptions;
-  authentication?: Authentication<"github-app">;
+  authentication?: Authentication<"github-app"> & { invalid?: true };
 };
 
 export type State = OAuthAppState | GitHubAppState;
@@ -117,4 +117,8 @@ export type WebFlowState = {
   clientType: ClientType;
   request: OctokitTypes.RequestInterface;
   strategyOptions: WebFlowOptions;
+};
+
+export type AuthOptions = {
+  type?: "check" | "reset" | "refresh" | "delete" | "deleteAuthorization";
 };
