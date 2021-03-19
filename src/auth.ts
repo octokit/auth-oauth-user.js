@@ -22,7 +22,7 @@ export async function auth<TClientType extends ClientType>(
 
   const currentAuthentication = (state.authentication as unknown) as Authentication<TClientType>;
 
-  // auto refresh
+  // (auto) refresh for user-to-server tokens
   if ("expiresAt" in currentAuthentication) {
     if (
       options.type === "refresh" ||
@@ -43,19 +43,22 @@ export async function auth<TClientType extends ClientType>(
         ...authentication,
       };
     }
-  } else {
-    if (options.type === "refresh") {
-      if (state.clientType === "oauth-app") {
-        throw new Error(
-          "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
-        );
-      }
+  }
 
+  // throw error for invalid refresh call
+  if (options.type === "refresh") {
+    if (state.clientType === "oauth-app") {
+      throw new Error(
+        "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
+      );
+    }
+
+    if (!currentAuthentication.hasOwnProperty("expiresAt")) {
       throw new Error("[@octokit/auth-oauth-user] Refresh token missing");
     }
   }
 
-  // check if token is valid
+  // check or reset token
   if (options.type === "check" || options.type === "reset") {
     const method = options.type === "check" ? checkToken : resetToken;
     try {
@@ -90,29 +93,11 @@ export async function auth<TClientType extends ClientType>(
   }
 
   // invalidate
-  if (options.type === "delete") {
+  if (options.type === "delete" || options.type === "deleteAuthorization") {
+    const method =
+      options.type === "delete" ? deleteToken : deleteAuthorization;
     try {
-      await deleteToken({
-        // @ts-expect-error making TS happy would require unnecessary code so no
-        clientType: state.clientType,
-        clientId: state.clientId,
-        clientSecret: state.clientSecret,
-        token: state.authentication.token,
-        request: state.request,
-      });
-    } catch (error) {
-      // istanbul ignore if
-      if (error.status !== 404) throw error;
-    }
-
-    state.authentication.invalid = true;
-    return state.authentication as Authentication<TClientType>;
-  }
-
-  // invalidate all tokens / revoke authorization for app
-  if (options.type === "deleteAuthorization") {
-    try {
-      await deleteAuthorization({
+      await method({
         // @ts-expect-error making TS happy would require unnecessary code so no
         clientType: state.clientType,
         clientId: state.clientId,
