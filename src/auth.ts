@@ -1,5 +1,6 @@
 import {
-  AuthOptions,
+  OAuthAppAuthOptions,
+  GitHubAppAuthOptions,
   OAuthAppAuthentication,
   GitHubAppAuthentication,
   GitHubAppAuthenticationWithExpiration,
@@ -17,17 +18,17 @@ import {
 
 export async function auth(
   state: OAuthAppState,
-  options?: AuthOptions
+  options?: OAuthAppAuthOptions
 ): Promise<OAuthAppAuthentication>;
 
 export async function auth(
   state: GitHubAppState,
-  options?: AuthOptions
+  options?: GitHubAppAuthOptions
 ): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
 
 export async function auth(
   state: OAuthAppState | GitHubAppState,
-  options: AuthOptions = {}
+  options: OAuthAppAuthOptions | GitHubAppAuthOptions = {}
 ): Promise<
   | OAuthAppAuthentication
   | GitHubAppAuthentication
