@@ -552,7 +552,9 @@ describe("auth({ type: 'check' })", () => {
   it("is valid", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://api.github.com/applications/1234567890abcdef1234/token",
-      {},
+      {
+        scopes: [],
+      },
       {
         headers: {
           accept: "application/vnd.github.v3+json",

@@ -56,33 +56,10 @@ export async function auth<TClientType extends ClientType>(
   }
 
   // check if token is valid
-  if (options.type === "check") {
+  if (options.type === "check" || options.type === "reset") {
+    const method = options.type === "check" ? checkToken : resetToken;
     try {
-      await checkToken({
-        // @ts-expect-error making TS happy would require unnecessary code so no
-        clientType: state.clientType,
-        clientId: state.clientId,
-        clientSecret: state.clientSecret,
-        token: state.authentication.token,
-        request: state.request,
-      });
-    } catch (error) {
-      // istanbul ignore else
-      if (error.status === 404) {
-        error.message = "[@octokit/auth-oauth-user] Token is invalid";
-        state.authentication.invalid = true;
-      }
-
-      throw error;
-    }
-
-    return state.authentication as Authentication<TClientType>;
-  }
-
-  // reset token
-  if (options.type === "reset") {
-    try {
-      const { authentication } = await resetToken({
+      const { authentication } = await method({
         // @ts-expect-error making TS happy would require unnecessary code so no
         clientType: state.clientType,
         clientId: state.clientId,
