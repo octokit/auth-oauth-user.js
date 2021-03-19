@@ -92,6 +92,7 @@ type OAuthAppState = {
     | WebFlowOptions
     | DeviceFlowOptions
     | ExistingOAuthAppAuthenticationOptions;
+  authentication?: Authentication<"oauth-app">;
 };
 
 type GitHubAppState = {
@@ -104,6 +105,7 @@ type GitHubAppState = {
     | DeviceFlowOptions
     | ExistingGitHubAppAuthenticationOptions
     | ExistingGitHubAppAuthenticationWithExpirationOptions;
+  authentication?: Authentication<"github-app">;
 };
 
 export type State = OAuthAppState | GitHubAppState;

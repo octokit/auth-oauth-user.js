@@ -1,4 +1,5 @@
 import fetchMock from "fetch-mock";
+import MockDate from "mockdate";
 import { request } from "@octokit/request";
 
 import { createOAuthUserAuth } from "../src/index";
@@ -296,4 +297,147 @@ test("Invalid strategy options", async () => {
   expect(async () => await auth()).rejects.toThrow(
     "[@octokit/auth-oauth-user] Invalid strategy options"
   );
+});
+
+test("Caches authentication for successive calls", async () => {
+  const mock = fetchMock.sandbox().postOnce(
+    "https://github.com/login/oauth/access_token",
+    {
+      access_token: "token123",
+      scope: "",
+      token_type: "bearer",
+    },
+    {
+      headers: {
+        accept: "application/json",
+        "user-agent": "test",
+        "content-type": "application/json; charset=utf-8",
+      },
+      body: {
+        client_id: "1234567890abcdef1234",
+        client_secret: "secret",
+        code: "code123",
+      },
+    }
+  );
+
+  const auth = createOAuthUserAuth({
+    clientId: "1234567890abcdef1234",
+    clientSecret: "secret",
+    code: "code123",
+    // pass request mock for testing
+    request: request.defaults({
+      headers: {
+        "user-agent": "test",
+      },
+      request: {
+        fetch: mock,
+      },
+    }),
+  });
+
+  const authentication = await auth();
+
+  expect(authentication).toEqual({
+    type: "token",
+    tokenType: "oauth",
+    clientType: "oauth-app",
+    clientId: "1234567890abcdef1234",
+    clientSecret: "secret",
+    token: "token123",
+    scopes: [],
+  });
+
+  const authentication2 = await auth();
+
+  expect(authentication).toEqual(authentication2);
+});
+
+test.skip("auto-refreshing for expiring tokens", async () => {
+  const mock = fetchMock.sandbox().postOnce(
+    (url, options) => {
+      expect(url).toEqual("https://github.com/login/oauth/access_token");
+      expect(options.headers).toEqual(
+        expect.objectContaining({
+          accept: "application/json",
+          "content-type": "application/json; charset=utf-8",
+        })
+      );
+      expect(options.body).toEqual({
+        client_id: "lv1.1234567890abcdef",
+        client_secret: "secret",
+        refresh_token: "r1.token123",
+        grant_type: "refresh_token",
+      });
+
+      return true;
+    },
+    {
+      body: {
+        access_token: "token456",
+        scope: "",
+        token_type: "bearer",
+        expires_in: 28800,
+        refresh_token: "r1.token456",
+        refresh_token_expires_in: 15897600,
+      },
+      headers: {
+        date: "Thu, 1 Jan 1970 08:00:00 GMT",
+      },
+    }
+  );
+
+  const auth = createOAuthUserAuth({
+    clientType: "github-app",
+    clientId: "lv1.1234567890abcdef",
+    clientSecret: "secret",
+    token: "token123",
+    expiresAt: "1970-01-01T08:00:00.000Z",
+    refreshToken: "r1.token123",
+    refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+
+    // pass request mock for testing
+    request: request.defaults({
+      headers: {
+        "user-agent": "test",
+      },
+      request: {
+        fetch: mock,
+      },
+    }),
+  });
+
+  const authentication1 = await auth();
+
+  MockDate.set(0);
+
+  expect(authentication1).toEqual({
+    type: "token",
+    tokenType: "oauth",
+    clientType: "github-app",
+    clientId: "lv1.1234567890abcdef",
+    clientSecret: "secret",
+    token: "token123",
+    expiresAt: "1970-01-01T08:00:00.000Z",
+    refreshToken: "r1.token123",
+    refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+  });
+
+  MockDate.set("1970-01-01T10:00:00.000Z");
+
+  const authentication2 = await auth();
+
+  expect(authentication2).toEqual({
+    type: "token",
+    tokenType: "oauth",
+    clientType: "github-app",
+    clientId: "lv1.1234567890abcdef",
+    clientSecret: "secret",
+    token: "token456",
+    expiresAt: "1970-01-01T18:00:00.000Z",
+    refreshToken: "r1.token456",
+    refreshTokenExpiresAt: "1970-07-04T10:00:00.000Z",
+  });
+
+  MockDate.reset();
 });

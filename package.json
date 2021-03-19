@@ -23,7 +23,8 @@
     "@octokit/oauth-methods": "^1.1.0",
     "@octokit/request": "^5.4.14",
     "@octokit/request-error": "^2.0.5",
-    "@octokit/types": "^6.12.2"
+    "@octokit/types": "^6.12.2",
+    "mockdate": "^3.0.4"
   },
   "devDependencies": {
     "@octokit/core": "^3.3.0",
