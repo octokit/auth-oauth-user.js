@@ -2,6 +2,7 @@ import { AuthOptions, Authentication, State, ClientType } from "./types";
 import { getAuthentication } from "./get-authentication";
 import {
   checkToken,
+  deleteAuthorization,
   deleteToken,
   refreshToken,
   resetToken,
@@ -115,6 +116,26 @@ export async function auth<TClientType extends ClientType>(
   if (options.type === "delete") {
     try {
       await deleteToken({
+        // @ts-expect-error making TS happy would require unnecessary code so no
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        token: state.authentication.token,
+        request: state.request,
+      });
+    } catch (error) {
+      // istanbul ignore if
+      if (error.status !== 404) throw error;
+    }
+
+    state.authentication.invalid = true;
+    return state.authentication as Authentication<TClientType>;
+  }
+
+  // invalidate all tokens / revoke authorization for app
+  if (options.type === "deleteAuthorization") {
+    try {
+      await deleteAuthorization({
         // @ts-expect-error making TS happy would require unnecessary code so no
         clientType: state.clientType,
         clientId: state.clientId,
