@@ -636,3 +636,118 @@ describe("auth({ type: 'check' })", () => {
     );
   });
 });
+
+describe("auth({ type: 'reset' })", () => {
+  it("uses new authentication after reset", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .patchOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        {
+          token: "token456",
+          scopes: [],
+        },
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token123" },
+        }
+      )
+      .postOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        {},
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token456" },
+        }
+      );
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    const authentication1 = await auth({
+      type: "reset",
+    });
+
+    expect(authentication1).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token456",
+      scopes: [],
+    });
+
+    await auth({
+      type: "check",
+    });
+  });
+
+  it("reset fails due to invalid token", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .patchOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        404,
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token123" },
+        }
+      );
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    await expect(
+      async () =>
+        await auth({
+          type: "reset",
+        })
+    ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
+  });
+});

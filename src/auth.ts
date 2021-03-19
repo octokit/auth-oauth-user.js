@@ -1,6 +1,6 @@
 import { AuthOptions, Authentication, State, ClientType } from "./types";
 import { getAuthentication } from "./get-authentication";
-import { checkToken, refreshToken } from "@octokit/oauth-methods";
+import { checkToken, refreshToken, resetToken } from "@octokit/oauth-methods";
 
 export async function auth<TClientType extends ClientType>(
   state: State,
@@ -64,6 +64,39 @@ export async function auth<TClientType extends ClientType>(
       // istanbul ignore else
       if (error.status === 404) {
         error.message = "[@octokit/auth-oauth-user] Token is invalid";
+        state.authentication.invalid = true;
+      }
+
+      throw error;
+    }
+
+    return state.authentication as Authentication<TClientType>;
+  }
+
+  // reset token
+  if (options.type === "reset") {
+    try {
+      const { authentication } = await resetToken({
+        // @ts-expect-error making TS happy would require unnecessary code so no
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        token: state.authentication.token,
+        request: state.request,
+      });
+
+      state.authentication = {
+        tokenType: "oauth",
+        type: "token",
+        // @ts-expect-error TBD
+        ...authentication,
+      };
+    } catch (error) {
+      // istanbul ignore else
+      if (error.status === 404) {
+        error.message = "[@octokit/auth-oauth-user] Token is invalid";
+
+        // @ts-expect-error TBD
         state.authentication.invalid = true;
       }
 
