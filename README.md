@@ -42,6 +42,7 @@
 - [GitHub's OAuth device flow](https://docs.github.com/en/developers/apps/authorizing-oauth-apps#device-flow)
 - Caches token for succesive calls
 - Auto-refreshing for [expiring user access tokens](https://docs.github.com/en/developers/apps/refreshing-user-to-server-access-tokens)
+- Applies the correct authentication strategy based on the request URL when using with `Octokit`
 - Token verification
 - Token reset
 - Token invalidation
