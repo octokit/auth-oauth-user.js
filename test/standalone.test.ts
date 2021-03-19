@@ -354,97 +354,198 @@ test("Caches authentication for successive calls", async () => {
   expect(authentication).toEqual(authentication2);
 });
 
-test("auto-refreshing for expiring tokens", async () => {
-  const mock = fetchMock.sandbox().postOnce(
-    (url, options) => {
-      expect(url).toEqual("https://github.com/login/oauth/access_token");
-      expect(options.headers).toEqual(
-        expect.objectContaining({
-          accept: "application/json",
-          "content-type": "application/json; charset=utf-8",
-        })
-      );
-      expect(JSON.parse(options.body as string)).toEqual({
-        client_id: "lv1.1234567890abcdef",
-        client_secret: "secret",
-        refresh_token: "r1.token123",
-        grant_type: "refresh_token",
-      });
+describe("refreshing tokens", () => {
+  test("auto-refreshing for expiring tokens", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      (url, options) => {
+        expect(url).toEqual("https://github.com/login/oauth/access_token");
+        expect(options.headers).toEqual(
+          expect.objectContaining({
+            accept: "application/json",
+            "content-type": "application/json; charset=utf-8",
+          })
+        );
+        expect(JSON.parse(options.body as string)).toEqual({
+          client_id: "lv1.1234567890abcdef",
+          client_secret: "secret",
+          refresh_token: "r1.token123",
+          grant_type: "refresh_token",
+        });
 
-      return true;
-    },
-    {
-      body: {
-        access_token: "token456",
-        scope: "",
-        token_type: "bearer",
-        expires_in: 28800,
-        refresh_token: "r1.token456",
-        refresh_token_expires_in: 15897600,
+        return true;
       },
-      headers: {
-        date: "Thu, 1 Jan 1970 10:00:00 GMT",
-      },
-    }
-  );
+      {
+        body: {
+          access_token: "token456",
+          scope: "",
+          token_type: "bearer",
+          expires_in: 28800,
+          refresh_token: "r1.token456",
+          refresh_token_expires_in: 15897600,
+        },
+        headers: {
+          date: "Thu, 1 Jan 1970 10:00:00 GMT",
+        },
+      }
+    );
 
-  const auth = createOAuthUserAuth({
-    clientType: "github-app",
-    clientId: "lv1.1234567890abcdef",
-    clientSecret: "secret",
-    token: "token123",
-    expiresAt: "1970-01-01T08:00:00.000Z",
-    refreshToken: "r1.token123",
-    refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+    const auth = createOAuthUserAuth({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token123",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
 
-    // pass request mock for testing
-    request: request.defaults({
-      headers: {
-        "user-agent": "test",
-      },
-      request: {
-        fetch: mock,
-      },
-    }),
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    MockDate.set(0);
+    const authentication1 = await auth();
+
+    expect(authentication1).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token123",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+    });
+
+    // not yet expired
+    MockDate.set("1970-01-01T05:00:00.000Z");
+    const authentication2 = await auth();
+    expect(authentication2).toEqual(authentication1);
+
+    // expired
+    MockDate.set("1970-01-01T10:00:00.000Z");
+    const authentication3 = await auth();
+
+    expect(authentication3).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token456",
+      expiresAt: "1970-01-01T18:00:00.000Z",
+      refreshToken: "r1.token456",
+      refreshTokenExpiresAt: "1970-07-04T10:00:00.000Z",
+    });
+
+    MockDate.reset();
   });
 
-  MockDate.set(0);
-  const authentication1 = await auth();
+  test('auth({ type: "refresh" })', async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      (url, options) => {
+        expect(url).toEqual("https://github.com/login/oauth/access_token");
+        expect(options.headers).toEqual(
+          expect.objectContaining({
+            accept: "application/json",
+            "content-type": "application/json; charset=utf-8",
+          })
+        );
+        expect(JSON.parse(options.body as string)).toEqual({
+          client_id: "lv1.1234567890abcdef",
+          client_secret: "secret",
+          refresh_token: "r1.token123",
+          grant_type: "refresh_token",
+        });
 
-  expect(authentication1).toEqual({
-    type: "token",
-    tokenType: "oauth",
-    clientType: "github-app",
-    clientId: "lv1.1234567890abcdef",
-    clientSecret: "secret",
-    token: "token123",
-    expiresAt: "1970-01-01T08:00:00.000Z",
-    refreshToken: "r1.token123",
-    refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+        return true;
+      },
+      {
+        body: {
+          access_token: "token456",
+          scope: "",
+          token_type: "bearer",
+          expires_in: 28800,
+          refresh_token: "r1.token456",
+          refresh_token_expires_in: 15897600,
+        },
+        headers: {
+          date: "Thu, 1 Jan 1970 00:00:00 GMT",
+        },
+      }
+    );
+
+    const auth = createOAuthUserAuth({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token123",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    MockDate.set(0);
+    const authentication = await auth({ type: "refresh" });
+
+    expect(authentication).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token456",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token456",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+    });
+
+    MockDate.reset();
   });
 
-  // not yet expired
-  MockDate.set("1970-01-01T05:00:00.000Z");
-  const authentication2 = await auth();
-  expect(authentication2).toEqual(authentication1);
+  test('auth({ type: "refresh" }) with OAuth App token', async () => {
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+    });
 
-  // expired
-  MockDate.set("1970-01-01T10:00:00.000Z");
-  const authentication3 = await auth();
-
-  expect(authentication3).toEqual({
-    type: "token",
-    tokenType: "oauth",
-    clientType: "github-app",
-    clientId: "lv1.1234567890abcdef",
-    clientSecret: "secret",
-    token: "token456",
-    expiresAt: "1970-01-01T18:00:00.000Z",
-    refreshToken: "r1.token456",
-    refreshTokenExpiresAt: "1970-07-04T10:00:00.000Z",
+    await expect(async () => await auth({ type: "refresh" })).rejects.toThrow(
+      "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
+    );
   });
 
-  MockDate.reset();
+  test('auth({ type: "refresh" }) without refresh token', async () => {
+    const auth = createOAuthUserAuth({
+      clientType: "github-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+    });
+
+    await expect(async () => await auth({ type: "refresh" })).rejects.toThrow(
+      "[@octokit/auth-oauth-user] Refresh token missing"
+    );
+  });
 });
 
 describe("auth({ type: 'check' })", () => {

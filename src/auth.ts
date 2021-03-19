@@ -18,8 +18,11 @@ export async function auth<TClientType extends ClientType>(
 
   // auto refresh
   if ("expiresAt" in currentAuthentication) {
-    // @ts-expect-error TBD
-    if (new Date(currentAuthentication.expiresAt) < new Date()) {
+    if (
+      options.type === "refresh" ||
+      // @ts-expect-error TBD
+      new Date(currentAuthentication.expiresAt) < new Date()
+    ) {
       const { authentication } = await refreshToken({
         clientType: "github-app",
         clientId: state.clientId,
@@ -33,6 +36,16 @@ export async function auth<TClientType extends ClientType>(
         type: "token",
         ...authentication,
       };
+    }
+  } else {
+    if (options.type === "refresh") {
+      if (state.clientType === "oauth-app") {
+        throw new Error(
+          "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
+        );
+      }
+
+      throw new Error("[@octokit/auth-oauth-user] Refresh token missing");
     }
   }
 
