@@ -3,7 +3,7 @@
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-We appreciate you taking the time to contribute to `@octokit/auth-oauth-client`. Especially as a new contributor, you have a valuable perspective that we lost a long time ago: you will find things confusing and run into problems that no longer occur to us. Please share them with us, so we can make the experience for future contributors the best it could be.
+We appreciate you taking the time to contribute to `@octokit/auth-oauth-user`. Especially as a new contributor, you have a valuable perspective that we lost a long time ago: you will find things confusing and run into problems that no longer occur to us. Please share them with us, so we can make the experience for future contributors the best it could be.
 
 Thank you 💖
 
@@ -11,7 +11,7 @@ Thank you 💖
 
 Before you create a new Issue:
 
-1. Please make sure there is no [open issue](https://github.com/octokit/auth-oauth-client.js/issues?utf8=%E2%9C%93&q=is%3Aissue) yet.
+1. Please make sure there is no [open issue](https://github.com/octokit/auth-oauth-user.js/issues?utf8=%E2%9C%93&q=is%3Aissue) yet.
 2. If it is a bug report, include the steps to reproduce the issue and please create a reproducible test case on [runkit.com](https://runkit.com/). Example: https://runkit.com/gr2m/octokit-rest-js-1808
 3. If it is a feature request, please share the motivation for the new feature, what alternatives you tried, and how you would implement it.
 4. Please include links to the corresponding github documentation.
@@ -23,8 +23,8 @@ First, fork the repository.
 Setup the repository locally. Replace `<your account name>` with the name of the account you forked to.
 
 ```shell
-git clone https://github.com/<your account name>/auth-oauth-client.js.git
-cd auth-oauth-client.js
+git clone https://github.com/<your account name>/auth-oauth-user.js.git
+cd auth-oauth-user.js
 npm install
 ```
 
@@ -38,18 +38,18 @@ npm test
 
 - Create a new branch locally.
 - Make your changes in that branch and push them to your fork
-- Submit a pull request from your topic branch to the main branch on the `octokit/auth-oauth-client.js` repository.
+- Submit a pull request from your topic branch to the main branch on the `octokit/auth-oauth-user.js` repository.
 - Be sure to tag any issues your pull request is taking care of / contributing to. Adding "Closes #123" to a pull request description will automatically close the issue once the pull request is merged in.
 
 ## Testing a pull request from github repo locally:
 
-You can install `@octokit/auth-oauth-client` from each pull request. Replace `[PULL REQUEST NUMBER]`:
+You can install `@octokit/auth-oauth-user` from each pull request. Replace `[PULL REQUEST NUMBER]`:
 
 ```
-npm install https://github.pika.dev/octokit/auth-oauth-client.js/pr/[PULL REQUEST NUMBER]
+npm install https://github.pika.dev/octokit/auth-oauth-user.js/pr/[PULL REQUEST NUMBER]
 ```
 
-Once you are done testing, you can revert back to the default module `@octokit/auth-oauth-client` from npm with `npm install @octokit/auth-oauth-client`
+Once you are done testing, you can revert back to the default module `@octokit/auth-oauth-user` from npm with `npm install @octokit/auth-oauth-user`
 
 ## Maintainers only
 
