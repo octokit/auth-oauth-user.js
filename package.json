@@ -1,5 +1,8 @@
 {
   "name": "@octokit/auth-oauth-user",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.0.0-development",
   "description": "Octokit authentication strategy for OAuth clients",
   "scripts": {
@@ -100,7 +103,9 @@
       ]
     ]
   },
-  "publishConfig": {
-    "access": "public"
+  "renovate": {
+    "extends": [
+      "github>octokit/.github"
+    ]
   }
 }
