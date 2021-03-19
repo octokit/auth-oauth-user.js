@@ -11,6 +11,7 @@ import {
   OAuthAppAuthInterface,
   GitHubAppAuthInterface,
 } from "./types";
+
 export {
   OAuthAppStrategyOptionsWebFlow,
   GitHubAppStrategyOptionsWebFlow,
@@ -27,6 +28,8 @@ export {
   GitHubAppAuthentication,
   GitHubAppAuthenticationWithExpiration,
 } from "./types";
+
+export { requiresBasicAuth } from "./requires-basic-auth";
 
 export function createOAuthUserAuth(
   options: OAuthAppStrategyOptions
