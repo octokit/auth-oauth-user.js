@@ -1,6 +1,11 @@
 import { AuthOptions, Authentication, State, ClientType } from "./types";
 import { getAuthentication } from "./get-authentication";
-import { checkToken, refreshToken, resetToken } from "@octokit/oauth-methods";
+import {
+  checkToken,
+  deleteToken,
+  refreshToken,
+  resetToken,
+} from "@octokit/oauth-methods";
 
 export async function auth<TClientType extends ClientType>(
   state: State,
@@ -103,6 +108,26 @@ export async function auth<TClientType extends ClientType>(
       throw error;
     }
 
+    return state.authentication as Authentication<TClientType>;
+  }
+
+  // invalidate
+  if (options.type === "delete") {
+    try {
+      await deleteToken({
+        // @ts-expect-error making TS happy would require unnecessary code so no
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        token: state.authentication.token,
+        request: state.request,
+      });
+    } catch (error) {
+      // istanbul ignore if
+      if (error.status !== 404) throw error;
+    }
+
+    state.authentication.invalid = true;
     return state.authentication as Authentication<TClientType>;
   }
 

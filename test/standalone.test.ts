@@ -751,3 +751,94 @@ describe("auth({ type: 'reset' })", () => {
     ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
   });
 });
+
+describe("auth({ type: 'delete' })", () => {
+  it("invalidates authentication for successive calls", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .deleteOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        204,
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token123" },
+        }
+      );
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    await auth({
+      type: "delete",
+    });
+
+    await expect(
+      async () =>
+        await await auth({
+          type: "check",
+        })
+    ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
+  });
+
+  it("does not throw in case the token is already invalid", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .deleteOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        404,
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token123" },
+        }
+      );
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    expect(
+      await auth({
+        type: "delete",
+      })
+    ).toEqual(expect.objectContaining({ invalid: true }));
+  });
+});
