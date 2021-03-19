@@ -1,3 +1,4 @@
+import btoa from "btoa-lite";
 import {
   EndpointOptions,
   EndpointDefaults,
@@ -6,8 +7,10 @@ import {
   RequestParameters,
   Route,
 } from "@octokit/types";
+
 import { OAuthAppState, GitHubAppState } from "./types";
 import { auth } from "./auth";
+import { requiresBasicAuth } from "./requires-basic-auth";
 
 type AnyResponse = OctokitResponse<any>;
 
@@ -31,16 +34,23 @@ export async function hook(
   route: Route | EndpointOptions,
   parameters: RequestParameters = {}
 ): Promise<AnyResponse> {
+  const endpoint = request.endpoint.merge(
+    route as string,
+    parameters
+  ) as EndpointDefaults & { url: string };
+
+  if (requiresBasicAuth(endpoint.url)) {
+    const credentials = btoa(`${state.clientId}:${state.clientSecret}`);
+    endpoint.headers.authorization = `basic ${credentials}`;
+    return request(endpoint);
+  }
+
   // TS makes us do this ¯\_(ツ)_/¯
   const { token } =
     state.clientType === "oauth-app"
       ? await auth({ ...state, request })
       : await auth({ ...state, request });
 
-  const endpoint = request.endpoint.merge(
-    route as string,
-    parameters
-  ) as EndpointDefaults & { url: string };
   endpoint.headers.authorization = "token " + token;
 
   return request(endpoint);

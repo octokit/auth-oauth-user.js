@@ -117,3 +117,50 @@ describe("Octokit + OAuth web flow", () => {
     expect(login).toEqual("octocat");
   });
 });
+
+test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* requests", async () => {
+  const matchCheckTokenRequest: MockMatcherFunction = (url, options) => {
+    expect(url).toEqual(
+      "https://api.github.com/applications/1234567890abcdef1234/token"
+    );
+    expect(options.headers).toEqual(
+      expect.objectContaining({
+        authorization:
+          "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6MTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3OA==",
+      })
+    );
+    expect(JSON.parse(options.body as string)).toEqual({
+      access_token: "token123",
+    });
+
+    return true;
+  };
+
+  const mock = fetchMock
+    .sandbox()
+    .postOnce(matchCheckTokenRequest, { ok: true });
+
+  const octokit = new Octokit({
+    authStrategy: createOAuthUserAuth,
+    auth: {
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef1234567890abcdef12345678",
+      code: "code123",
+    },
+    request: {
+      fetch: mock,
+    },
+  });
+
+  // Exchanges the code for the user access token authentication on first request
+  // and caches the authentication for successive requests
+  const { data } = await octokit.request(
+    "POST /applications/{client_id}/token",
+    {
+      client_id: "1234567890abcdef1234",
+      access_token: "token123",
+    }
+  );
+
+  expect(data).toEqual({ ok: true });
+});
