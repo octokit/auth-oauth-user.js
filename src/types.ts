@@ -4,24 +4,36 @@ import * as OAuthMethodsTypes from "@octokit/oauth-methods";
 
 export type ClientType = "oauth-app" | "github-app";
 
-type CommonStrategyOptions<TClientType extends ClientType> = {
-  clientType?: TClientType;
-  clientId: string;
-  clientSecret: string;
-  request?: OctokitTypes.RequestInterface;
-};
-
 export type WebFlowOptions = {
   code: string;
   state?: string;
   redirectUrl?: string;
 };
 
-type DeviceFlowOptions = {
+// STRATEGY OPTIONS
+
+type CommonOAuthAppStrategyOptions = {
+  clientType?: "oauth-app";
+  clientId: string;
+  clientSecret: string;
+  request?: OctokitTypes.RequestInterface;
+};
+type CommonGitHubAppStrategyOptions = {
+  clientType?: "github-app";
+  clientId: string;
+  clientSecret: string;
+  request?: OctokitTypes.RequestInterface;
+};
+
+type OAuthAppDeviceFlowOptions = {
   onVerification: DeviceTypes.OAuthAppStrategyOptions["onVerification"];
   scopes?: string[];
 };
+type GitHubDeviceFlowOptions = {
+  onVerification: DeviceTypes.OAuthAppStrategyOptions["onVerification"];
+};
 type ExistingOAuthAppAuthenticationOptions = {
+  clientType: "oauth-app";
   token: string;
   scopes: string[];
 };
@@ -35,8 +47,55 @@ type ExistingGitHubAppAuthenticationWithExpirationOptions = {
   refreshTokenExpiresAt: string;
 };
 
-export interface AuthInterface<TClientType extends ClientType> {
-  (options?: AuthOptions): Promise<Authentication<TClientType>>;
+export type OAuthAppStrategyOptionsWebFlow = CommonOAuthAppStrategyOptions &
+  WebFlowOptions;
+export type GitHubAppStrategyOptionsWebFlow = CommonGitHubAppStrategyOptions &
+  WebFlowOptions;
+
+export type OAuthAppStrategyOptionsDeviceFlow = CommonOAuthAppStrategyOptions &
+  OAuthAppDeviceFlowOptions;
+export type GitHubAppStrategyOptionsDeviceFlow = CommonGitHubAppStrategyOptions &
+  GitHubDeviceFlowOptions;
+
+export type OAuthAppStrategyOptionsExistingAuthentication = CommonOAuthAppStrategyOptions &
+  ExistingOAuthAppAuthenticationOptions;
+
+export type GitHubAppStrategyOptionsExistingAuthentication = CommonGitHubAppStrategyOptions &
+  ExistingGitHubAppAuthenticationOptions;
+
+export type GitHubAppStrategyOptionsExistingAuthenticationWithExpiration = CommonGitHubAppStrategyOptions &
+  ExistingGitHubAppAuthenticationWithExpirationOptions;
+
+export type OAuthAppStrategyOptions =
+  | OAuthAppStrategyOptionsWebFlow
+  | OAuthAppStrategyOptionsDeviceFlow
+  | OAuthAppStrategyOptionsExistingAuthentication;
+export type GitHubAppStrategyOptions =
+  | GitHubAppStrategyOptionsWebFlow
+  | GitHubAppStrategyOptionsDeviceFlow
+  | GitHubAppStrategyOptionsExistingAuthentication
+  | GitHubAppStrategyOptionsExistingAuthenticationWithExpiration;
+
+// AUTHENTICATION
+
+export type OAuthAppAuthentication = {
+  tokenType: "oauth";
+  type: "token";
+} & OAuthMethodsTypes.OAuthAppAuthentication;
+
+export type GitHubAppAuthentication = {
+  tokenType: "oauth";
+  type: "token";
+} & OAuthMethodsTypes.GitHubAppAuthentication;
+export type GitHubAppAuthenticationWithExpiration = {
+  tokenType: "oauth";
+  type: "token";
+} & OAuthMethodsTypes.GitHubAppAuthenticationWithExpiration;
+
+// INTERFACE
+
+export interface OAuthAppAuthInterface {
+  (options?: OAuthAppAuthOptions): Promise<OAuthAppAuthentication>;
 
   hook(
     request: OctokitTypes.RequestInterface,
@@ -45,68 +104,48 @@ export interface AuthInterface<TClientType extends ClientType> {
   ): Promise<OctokitTypes.OctokitResponse<any>>;
 }
 
-export type StrategyOptionsExistingOAuthAppAuthentication = CommonStrategyOptions<"oauth-app"> &
-  ExistingOAuthAppAuthenticationOptions & { clientType: "oauth-app" };
+export interface GitHubAppAuthInterface {
+  (options?: GitHubAppAuthOptions): Promise<GitHubAppAuthentication>;
 
-export type StrategyOptionsExistingGitHubAppAuthentication = CommonStrategyOptions<"github-app"> &
-  ExistingGitHubAppAuthenticationOptions & { clientType: "github-app" };
+  hook(
+    request: OctokitTypes.RequestInterface,
+    route: OctokitTypes.Route | OctokitTypes.EndpointOptions,
+    parameters?: OctokitTypes.RequestParameters
+  ): Promise<OctokitTypes.OctokitResponse<any>>;
+}
 
-export type StrategyOptionsExistingGitHubAppAuthenticationWithExpiration = CommonStrategyOptions<"github-app"> &
-  ExistingGitHubAppAuthenticationWithExpirationOptions & {
-    clientType: "github-app";
-  };
-
-type StrategyOptionsWebFlow<
-  TClientType extends ClientType
-> = CommonStrategyOptions<TClientType> & WebFlowOptions;
-type StrategyOptionsDeviceFlow<
-  TClientType extends ClientType
-> = CommonStrategyOptions<TClientType> & DeviceFlowOptions;
-type StrategyOptionsExistingAuthentication<
-  TClientType extends ClientType
-> = TClientType extends "oauth-app"
-  ? StrategyOptionsExistingOAuthAppAuthentication
-  :
-      | StrategyOptionsExistingGitHubAppAuthentication
-      | StrategyOptionsExistingGitHubAppAuthenticationWithExpiration;
-
-export type StrategyOptions<TClientType extends ClientType = "oauth-app"> =
-  | StrategyOptionsWebFlow<TClientType>
-  | StrategyOptionsDeviceFlow<TClientType>
-  | StrategyOptionsExistingAuthentication<TClientType>;
-
-export type Authentication<TClientType extends ClientType> = {
-  tokenType: "oauth";
-  type: "token";
-} & (TClientType extends "oauth-app"
-  ? OAuthMethodsTypes.OAuthAppAuthentication
-  :
-      | OAuthMethodsTypes.GitHubAppAuthentication
-      | OAuthMethodsTypes.GitHubAppAuthenticationWithExpiration);
-
-type OAuthAppState = {
+export type OAuthAppState = {
   clientId: string;
   clientSecret: string;
   clientType: "oauth-app";
   request: OctokitTypes.RequestInterface;
   strategyOptions:
     | WebFlowOptions
-    | DeviceFlowOptions
+    | OAuthAppDeviceFlowOptions
     | ExistingOAuthAppAuthenticationOptions;
-  authentication?: Authentication<"oauth-app"> & { invalid?: true };
+  authentication?: OAuthAppAuthentication & { invalid?: true };
 };
 
-type GitHubAppState = {
+type GitHubAppStateAuthentication = GitHubAppAuthentication & {
+  invalid?: true;
+};
+type GitHubAppStateAuthenticationWIthExpiration = GitHubAppAuthenticationWithExpiration & {
+  invalid?: true;
+};
+
+export type GitHubAppState = {
   clientId: string;
   clientSecret: string;
   clientType: "github-app";
   request: OctokitTypes.RequestInterface;
   strategyOptions:
     | WebFlowOptions
-    | DeviceFlowOptions
+    | GitHubDeviceFlowOptions
     | ExistingGitHubAppAuthenticationOptions
     | ExistingGitHubAppAuthenticationWithExpirationOptions;
-  authentication?: Authentication<"github-app"> & { invalid?: true };
+  authentication?:
+    | GitHubAppStateAuthentication
+    | GitHubAppStateAuthenticationWIthExpiration;
 };
 
 export type State = OAuthAppState | GitHubAppState;
@@ -119,6 +158,10 @@ export type WebFlowState = {
   strategyOptions: WebFlowOptions;
 };
 
-export type AuthOptions = {
+export type OAuthAppAuthOptions = {
+  type?: "check" | "reset" | "delete" | "deleteAuthorization";
+};
+
+export type GitHubAppAuthOptions = {
   type?: "check" | "reset" | "refresh" | "delete" | "deleteAuthorization";
 };

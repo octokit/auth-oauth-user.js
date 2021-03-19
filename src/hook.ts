@@ -6,21 +6,36 @@ import {
   RequestParameters,
   Route,
 } from "@octokit/types";
-import { State } from "./types";
+import { OAuthAppState, GitHubAppState } from "./types";
 import { auth } from "./auth";
 
 type AnyResponse = OctokitResponse<any>;
 
 export async function hook(
-  state: State,
+  state: OAuthAppState,
+  request: RequestInterface,
+  route: Route | EndpointOptions,
+  parameters: RequestParameters
+): Promise<AnyResponse>;
+
+export async function hook(
+  state: GitHubAppState,
+  request: RequestInterface,
+  route: Route | EndpointOptions,
+  parameters: RequestParameters
+): Promise<AnyResponse>;
+
+export async function hook(
+  state: OAuthAppState | GitHubAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
   parameters: RequestParameters = {}
 ): Promise<AnyResponse> {
-  const { token } = await auth({
-    ...state,
-    request,
-  });
+  // TS makes us do this ¯\_(ツ)_/¯
+  const { token } =
+    state.clientType === "oauth-app"
+      ? await auth({ ...state, request })
+      : await auth({ ...state, request });
 
   const endpoint = request.endpoint.merge(
     route as string,

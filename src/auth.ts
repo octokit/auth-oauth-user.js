@@ -1,4 +1,11 @@
-import { AuthOptions, Authentication, State, ClientType } from "./types";
+import {
+  AuthOptions,
+  OAuthAppAuthentication,
+  GitHubAppAuthentication,
+  GitHubAppAuthenticationWithExpiration,
+  OAuthAppState,
+  GitHubAppState,
+} from "./types";
 import { getAuthentication } from "./get-authentication";
 import {
   checkToken,
@@ -8,32 +15,48 @@ import {
   resetToken,
 } from "@octokit/oauth-methods";
 
-export async function auth<TClientType extends ClientType>(
-  state: State,
+export async function auth(
+  state: OAuthAppState,
+  options?: AuthOptions
+): Promise<OAuthAppAuthentication>;
+
+export async function auth(
+  state: GitHubAppState,
+  options?: AuthOptions
+): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
+
+export async function auth(
+  state: OAuthAppState | GitHubAppState,
   options: AuthOptions = {}
-): Promise<Authentication<TClientType>> {
+): Promise<
+  | OAuthAppAuthentication
+  | GitHubAppAuthentication
+  | GitHubAppAuthenticationWithExpiration
+> {
   if (!state.authentication) {
-    state.authentication = await getAuthentication(state);
+    // This is what TS makes us do ¯\_(ツ)_/¯
+    state.authentication =
+      state.clientType === "oauth-app"
+        ? await getAuthentication(state)
+        : await getAuthentication(state);
   }
 
   if (state.authentication.invalid) {
     throw new Error("[@octokit/auth-oauth-user] Token is invalid");
   }
 
-  const currentAuthentication = (state.authentication as unknown) as Authentication<TClientType>;
+  const currentAuthentication = state.authentication;
 
   // (auto) refresh for user-to-server tokens
   if ("expiresAt" in currentAuthentication) {
     if (
       options.type === "refresh" ||
-      // @ts-expect-error TBD
       new Date(currentAuthentication.expiresAt) < new Date()
     ) {
       const { authentication } = await refreshToken({
         clientType: "github-app",
         clientId: state.clientId,
         clientSecret: state.clientSecret,
-        // @ts-expect-error TBD
         refreshToken: currentAuthentication.refreshToken,
         request: state.request,
       });
@@ -77,6 +100,11 @@ export async function auth<TClientType extends ClientType>(
         // @ts-expect-error TBD
         ...authentication,
       };
+
+      return state.authentication as
+        | OAuthAppAuthentication
+        | GitHubAppAuthentication
+        | GitHubAppAuthenticationWithExpiration;
     } catch (error) {
       // istanbul ignore else
       if (error.status === 404) {
@@ -88,8 +116,6 @@ export async function auth<TClientType extends ClientType>(
 
       throw error;
     }
-
-    return state.authentication as Authentication<TClientType>;
   }
 
   // invalidate
@@ -111,8 +137,8 @@ export async function auth<TClientType extends ClientType>(
     }
 
     state.authentication.invalid = true;
-    return state.authentication as Authentication<TClientType>;
+    return state.authentication;
   }
 
-  return state.authentication as Authentication<TClientType>;
+  return state.authentication;
 }
