@@ -556,6 +556,8 @@ createOAuthAppAuth({
 
 The async `auth()` method is returned by `createOAuthUserAuth(options)` or set on the `octokit` instance when the `Octokit` constructor was called with `authStrategy: createOAuthUserAuth`.
 
+Once `auth()` receives a valid authentication object it caches it in memory and uses it for subsequent calls. It also caches if the token is invalid and no longer tries to send any requests. If the authentication is using a refresh token, a new token will be requested as needed. Calling `auth({ type: "reset" })` will replace the internally cached authentication.
+
 Resolves with an [authentication object](#authentication-object).
 
 <table width="100%">
