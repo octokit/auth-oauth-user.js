@@ -28,6 +28,7 @@
   - [GitHub APP user authentication token with expiring disabled](#github-app-user-authentication-token-with-expiring-disabled)
   - [GitHub APP user authentication token with expiring enabled](#github-app-user-authentication-token-with-expiring-enabled)
 - [`auth.hook(request, route, parameters)` or `auth.hook(request, options)`](#authhookrequest-route-parameters-or-authhookrequest-options)
+- [Types](#types)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -975,6 +976,27 @@ const requestWithAuth = request.defaults({
 });
 
 const { data: user } = await requestWithAuth("GET /user");
+```
+
+## Types
+
+```ts
+import {
+  GitHubAppAuthentication,
+  GitHubAppAuthenticationWithExpiration,
+  GitHubAppAuthOptions,
+  GitHubAppStrategyOptions,
+  GitHubAppStrategyOptionsDeviceFlow,
+  GitHubAppStrategyOptionsExistingAuthentication,
+  GitHubAppStrategyOptionsExistingAuthenticationWithExpiration,
+  GitHubAppStrategyOptionsWebFlow,
+  OAuthAppAuthentication,
+  OAuthAppAuthOptions,
+  OAuthAppStrategyOptions,
+  OAuthAppStrategyOptionsDeviceFlow,
+  OAuthAppStrategyOptionsExistingAuthentication,
+  OAuthAppStrategyOptionsWebFlow,
+} from "@octokit/auth-oauth-user";
 ```
 
 ## Contributing

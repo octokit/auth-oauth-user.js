@@ -529,6 +529,7 @@ describe("refreshing tokens", () => {
       scopes: [],
     });
 
+    // @ts-expect-error "refresh" is not permitted for OAuth Apps
     await expect(async () => await auth({ type: "refresh" })).rejects.toThrow(
       "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
     );

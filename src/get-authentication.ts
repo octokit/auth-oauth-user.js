@@ -1,13 +1,31 @@
 // @ts-nocheck there is only place for one of us in this file. And it's not you, TS
 
-import { State, ClientType, Authentication } from "./types";
+import {
+  OAuthAppState,
+  GitHubAppState,
+  OAuthAppAuthentication,
+  GitHubAppAuthentication,
+  GitHubAppAuthenticationWithExpiration,
+  Authentication,
+} from "./types";
 
 import { createOAuthDeviceAuth } from "@octokit/auth-oauth-device";
 import { exchangeWebFlowCode } from "@octokit/oauth-methods";
 
-export async function getAuthentication<TClientType extends ClientType>(
-  state: State
-): Promise<Authentication<TClientType>> {
+export async function getAuthentication(
+  state: OAuthAppState
+): Promise<OAuthAppAuthentication>;
+export async function getAuthentication(
+  state: GitHubAppState
+): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
+
+export async function getAuthentication(
+  state: OAuthAppState | GitHubAppState
+): Promise<
+  | OAuthAppAuthentication
+  | GitHubAppAuthentication
+  | GitHubAppAuthenticationWithExpiration
+> {
   // handle code exchange form OAuth Web Flow
   if ("code" in state.strategyOptions) {
     const { authentication } = await exchangeWebFlowCode({
