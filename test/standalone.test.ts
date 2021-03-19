@@ -353,7 +353,7 @@ test("Caches authentication for successive calls", async () => {
   expect(authentication).toEqual(authentication2);
 });
 
-test.skip("auto-refreshing for expiring tokens", async () => {
+test("auto-refreshing for expiring tokens", async () => {
   const mock = fetchMock.sandbox().postOnce(
     (url, options) => {
       expect(url).toEqual("https://github.com/login/oauth/access_token");
@@ -363,7 +363,7 @@ test.skip("auto-refreshing for expiring tokens", async () => {
           "content-type": "application/json; charset=utf-8",
         })
       );
-      expect(options.body).toEqual({
+      expect(JSON.parse(options.body as string)).toEqual({
         client_id: "lv1.1234567890abcdef",
         client_secret: "secret",
         refresh_token: "r1.token123",
@@ -382,7 +382,7 @@ test.skip("auto-refreshing for expiring tokens", async () => {
         refresh_token_expires_in: 15897600,
       },
       headers: {
-        date: "Thu, 1 Jan 1970 08:00:00 GMT",
+        date: "Thu, 1 Jan 1970 10:00:00 GMT",
       },
     }
   );
@@ -423,11 +423,17 @@ test.skip("auto-refreshing for expiring tokens", async () => {
     refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
   });
 
+  // not yet expired
+  MockDate.set("1970-01-01T05:00:00.000Z");
+  const authentication2 = await auth();
+  expect(authentication2).toEqual(authentication1);
+
+  // expired
   MockDate.set("1970-01-01T10:00:00.000Z");
 
-  const authentication2 = await auth();
+  const authentication3 = await auth();
 
-  expect(authentication2).toEqual({
+  expect(authentication3).toEqual({
     type: "token",
     tokenType: "oauth",
     clientType: "github-app",

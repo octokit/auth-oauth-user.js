@@ -75,13 +75,14 @@ export type StrategyOptions<TClientType extends ClientType = "oauth-app"> =
   | StrategyOptionsDeviceFlow<TClientType>
   | StrategyOptionsExistingAuthentication<TClientType>;
 
-export type Authentication<
-  TClientType extends ClientType
-> = TClientType extends "oauth-app"
+export type Authentication<TClientType extends ClientType> = {
+  tokenType: "oauth";
+  type: "token";
+} & (TClientType extends "oauth-app"
   ? OAuthMethodsTypes.OAuthAppAuthentication
   :
       | OAuthMethodsTypes.GitHubAppAuthentication
-      | OAuthMethodsTypes.GitHubAppAuthenticationWithExpiration;
+      | OAuthMethodsTypes.GitHubAppAuthenticationWithExpiration);
 
 type OAuthAppState = {
   clientId: string;
