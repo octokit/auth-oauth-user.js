@@ -190,7 +190,7 @@ const octokit = new Octokit({
 const {
   data: { login },
 } = await octokit.request("GET /user");
-console.log("Hello, %!", login);
+console.log("Hello, %s!", login);
 ```
 
 ## `createOAuthUserAuth(options)` or `new Octokit({ auth })`
