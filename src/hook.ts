@@ -39,6 +39,13 @@ export async function hook(
     parameters
   ) as EndpointDefaults & { url: string };
 
+  // Do not intercept OAuth Web/Device flow request
+  if (
+    /\/login\/(oauth\/access_token|device\/code)$/.test(endpoint.url as string)
+  ) {
+    return request(endpoint);
+  }
+
   if (requiresBasicAuth(endpoint.url)) {
     const credentials = btoa(`${state.clientId}:${state.clientSecret}`);
     endpoint.headers.authorization = `basic ${credentials}`;
