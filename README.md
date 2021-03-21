@@ -672,7 +672,7 @@ The differences are
         <code>string</code>
       </th>
       <td>
-        The app's <code>Client ID</code>
+        The <code>clientId</code> from the strategy options
       </td>
     </tr>
     <tr>
@@ -683,7 +683,7 @@ The differences are
         <code>string</code>
       </th>
       <td>
-        One of the app's client secrets
+        The <code>clientSecret</code> from the strategy options
       </td>
     </tr>
     <tr>
@@ -782,7 +782,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
         <code>string</code>
       </th>
       <td>
-        The app's <code>Client ID</code>
+        The <code>clientId</code> from the strategy options
       </td>
     </tr>
     <tr>
@@ -793,7 +793,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
         <code>string</code>
       </th>
       <td>
-        One of the app's client secrets
+        The <code>clientSecret</code> from the strategy options
       </td>
     </tr>
     <tr>
@@ -819,7 +819,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
 Either `undefined` or `true`. Will be set to `true` if the token was invalided explicitly or found to be invalid
 
 </td>
-
+    </tr>
   </tbody>
 </table>
 
@@ -881,7 +881,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
         <code>string</code>
       </th>
       <td>
-        The app's <code>Client ID</code>
+        The <code>clientId</code> from the strategy options
       </td>
     </tr>
     <tr>
@@ -892,7 +892,7 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
         <code>string</code>
       </th>
       <td>
-        One of the app's client secrets
+        The <code>clientSecret</code> from the strategy options
       </td>
     </tr>
     <tr>
