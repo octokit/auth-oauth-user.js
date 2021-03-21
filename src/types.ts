@@ -105,7 +105,9 @@ export interface OAuthAppAuthInterface {
 }
 
 export interface GitHubAppAuthInterface {
-  (options?: GitHubAppAuthOptions): Promise<GitHubAppAuthentication>;
+  (options?: GitHubAppAuthOptions): Promise<
+    GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration
+  >;
 
   hook(
     request: OctokitTypes.RequestInterface,
@@ -113,6 +115,8 @@ export interface GitHubAppAuthInterface {
     parameters?: OctokitTypes.RequestParameters
   ): Promise<OctokitTypes.OctokitResponse<any>>;
 }
+
+// INTERNAL STATE
 
 export type OAuthAppState = {
   clientId: string;
