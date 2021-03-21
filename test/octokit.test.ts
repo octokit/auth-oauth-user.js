@@ -164,3 +164,42 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
 
   expect(data).toEqual({ ok: true });
 });
+
+test("Sets no auth auth for OAuth Web flow requests", async () => {
+  const matchCreateTokenRequest: MockMatcherFunction = (url, options) => {
+    expect(url).toEqual("https://github.com/login/oauth/access_token");
+    // @ts-ignore
+    expect(options.headers.authorization).toBeUndefined();
+
+    return true;
+  };
+
+  const mock = fetchMock
+    .sandbox()
+    .postOnce(matchCreateTokenRequest, { ok: true });
+
+  const octokit = new Octokit({
+    authStrategy: createOAuthUserAuth,
+    auth: {
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef1234567890abcdef12345678",
+      code: "code123",
+    },
+    request: {
+      fetch: mock,
+    },
+  });
+
+  // Exchanges the code for the user access token authentication on first request
+  // and caches the authentication for successive requests
+  const { data } = await octokit.request(
+    "POST https://github.com/login/oauth/access_token",
+    {
+      client_id: "1234567890abcdef1234",
+      client_secret: "client_secret",
+      code: "code123",
+    }
+  );
+
+  expect(data).toEqual({ ok: true });
+});
