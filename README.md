@@ -383,7 +383,7 @@ const auth = createOAuthUserAuth({
     console.log("Open %s", verification.verification_uri);
     console.log("Enter code: %s", verification.user_code);
 
-    await prompt("press enter when you are ready to continue")
+    await prompt("press enter when you are ready to continue");
   },
 });
 ```
@@ -409,7 +409,7 @@ createOAuthAppAuth({
     console.log("Open %s", verification.verification_uri);
     console.log("Enter code: %s", verification.user_code);
 
-    await prompt("press enter when you are ready to continue")
+    await prompt("press enter when you are ready to continue");
   },
   request: request.defaults({
     baseUrl: "https://ghe.my-company.com/api/v3",
