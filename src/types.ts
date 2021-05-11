@@ -54,17 +54,18 @@ export type GitHubAppStrategyOptionsWebFlow = CommonGitHubAppStrategyOptions &
 
 export type OAuthAppStrategyOptionsDeviceFlow = CommonOAuthAppStrategyOptions &
   OAuthAppDeviceFlowOptions;
-export type GitHubAppStrategyOptionsDeviceFlow = CommonGitHubAppStrategyOptions &
-  GitHubDeviceFlowOptions;
+export type GitHubAppStrategyOptionsDeviceFlow =
+  CommonGitHubAppStrategyOptions & GitHubDeviceFlowOptions;
 
-export type OAuthAppStrategyOptionsExistingAuthentication = CommonOAuthAppStrategyOptions &
-  ExistingOAuthAppAuthenticationOptions;
+export type OAuthAppStrategyOptionsExistingAuthentication =
+  CommonOAuthAppStrategyOptions & ExistingOAuthAppAuthenticationOptions;
 
-export type GitHubAppStrategyOptionsExistingAuthentication = CommonGitHubAppStrategyOptions &
-  ExistingGitHubAppAuthenticationOptions;
+export type GitHubAppStrategyOptionsExistingAuthentication =
+  CommonGitHubAppStrategyOptions & ExistingGitHubAppAuthenticationOptions;
 
-export type GitHubAppStrategyOptionsExistingAuthenticationWithExpiration = CommonGitHubAppStrategyOptions &
-  ExistingGitHubAppAuthenticationWithExpirationOptions;
+export type GitHubAppStrategyOptionsExistingAuthenticationWithExpiration =
+  CommonGitHubAppStrategyOptions &
+    ExistingGitHubAppAuthenticationWithExpirationOptions;
 
 export type OAuthAppStrategyOptions =
   | OAuthAppStrategyOptionsWebFlow
@@ -133,9 +134,10 @@ export type OAuthAppState = {
 type GitHubAppStateAuthentication = GitHubAppAuthentication & {
   invalid?: true;
 };
-type GitHubAppStateAuthenticationWIthExpiration = GitHubAppAuthenticationWithExpiration & {
-  invalid?: true;
-};
+type GitHubAppStateAuthenticationWIthExpiration =
+  GitHubAppAuthenticationWithExpiration & {
+    invalid?: true;
+  };
 
 export type GitHubAppState = {
   clientId: string;
