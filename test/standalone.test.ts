@@ -550,7 +550,7 @@ describe("refreshing tokens", () => {
 });
 
 describe("auth({ type: 'get' })", () => {
-  it.only("is valid", async () => {
+  it("is valid", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://api.github.com/applications/1234567890abcdef1234/token",
       {
