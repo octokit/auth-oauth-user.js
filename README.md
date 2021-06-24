@@ -590,6 +590,7 @@ Without setting `type` auth will return the current authentication object, or ex
 
 Possible values for `type` are
 
+- `"get"`: returns the token from internal state and creates it if none was created yet
 - `"check"`: sends request to verify the validity of the current token
 - `"reset"`: invalidates current token and replaces it with a new one
 - `"refresh"`: GitHub Apps only, and only if expiring user tokens are enabled.
