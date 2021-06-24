@@ -549,6 +549,62 @@ describe("refreshing tokens", () => {
   });
 });
 
+describe("auth({ type: 'get' })", () => {
+  it("is valid", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      "https://api.github.com/applications/1234567890abcdef1234/token",
+      {
+        scopes: [],
+      },
+      {
+        headers: {
+          accept: "application/vnd.github.v3+json",
+          "user-agent": "test",
+          authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+          "content-type": "application/json; charset=utf-8",
+        },
+        body: { access_token: "token123" },
+      }
+    );
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    const authentication1 = await auth({
+      type: "get",
+    });
+    const authentication2 = await auth({
+      type: "get",
+    });
+
+    expect(authentication1).toEqual({
+      type: "token",
+      tokenType: "oauth",
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+    });
+    expect(authentication1).toEqual(authentication2);
+  });
+});
+
 describe("auth({ type: 'check' })", () => {
   it("is valid", async () => {
     const mock = fetchMock.sandbox().postOnce(

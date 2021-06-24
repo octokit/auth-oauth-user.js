@@ -165,9 +165,15 @@ export type WebFlowState = {
 };
 
 export type OAuthAppAuthOptions = {
-  type?: "check" | "reset" | "delete" | "deleteAuthorization";
+  type?: "get" | "check" | "reset" | "delete" | "deleteAuthorization";
 };
 
 export type GitHubAppAuthOptions = {
-  type?: "check" | "reset" | "refresh" | "delete" | "deleteAuthorization";
+  type?:
+    | "get"
+    | "check"
+    | "reset"
+    | "refresh"
+    | "delete"
+    | "deleteAuthorization";
 };
