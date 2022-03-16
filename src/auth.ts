@@ -106,7 +106,7 @@ export async function auth(
         | OAuthAppAuthentication
         | GitHubAppAuthentication
         | GitHubAppAuthenticationWithExpiration;
-    } catch (error) {
+    } catch (error: any) {
       // istanbul ignore else
       if (error.status === 404) {
         error.message = "[@octokit/auth-oauth-user] Token is invalid";
@@ -132,7 +132,7 @@ export async function auth(
         token: state.authentication.token,
         request: state.request,
       });
-    } catch (error) {
+    } catch (error: any) {
       // istanbul ignore if
       if (error.status !== 404) throw error;
     }
