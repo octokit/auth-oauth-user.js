@@ -30,7 +30,7 @@
     "universal-user-agent": "^6.0.0"
   },
   "devDependencies": {
-    "@octokit/core": "^3.3.0",
+    "@octokit/core": "^4.0.0",
     "@octokit/tsconfig": "^1.0.2",
     "@pika/pack": "^0.5.0",
     "@pika/plugin-build-node": "^0.9.2",
