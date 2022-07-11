@@ -24,7 +24,6 @@ describe("Exchange code from OAuth web flow", () => {
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
-          state: "state123",
         },
       }
     );
@@ -33,7 +32,6 @@ describe("Exchange code from OAuth web flow", () => {
       clientId: "1234567890abcdef1234",
       clientSecret: "secret",
       code: "code123",
-      state: "state123",
       redirectUrl: "https://acme-inc.com/login",
       // pass request mock for testing
       request: request.defaults({
@@ -78,7 +76,6 @@ describe("Exchange code from OAuth web flow", () => {
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
-          state: "state123",
         },
       }
     );
@@ -88,7 +85,6 @@ describe("Exchange code from OAuth web flow", () => {
       clientId: "lv1.1234567890abcdef",
       clientSecret: "secret",
       code: "code123",
-      state: "state123",
       redirectUrl: "https://acme-inc.com/login",
       // pass request mock for testing
       request: request.defaults({
@@ -140,7 +136,6 @@ describe("Exchange code from OAuth web flow", () => {
           client_secret: "secret",
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
-          state: "state123",
         },
       }
     );
@@ -150,7 +145,6 @@ describe("Exchange code from OAuth web flow", () => {
       clientId: "lv1.1234567890abcdef",
       clientSecret: "secret",
       code: "code123",
-      state: "state123",
       redirectUrl: "https://acme-inc.com/login",
       // pass request mock for testing
       request: request.defaults({
