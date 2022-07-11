@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/auth-oauth-device": "^4.0.0",
-    "@octokit/oauth-methods": "^1.1.0",
+    "@octokit/oauth-methods": "^2.0.0",
     "@octokit/request": "^6.0.0",
     "@octokit/types": "^6.12.2",
     "btoa-lite": "^1.0.0",
