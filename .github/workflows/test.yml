@@ -8,4 +8,4 @@ on:
 
 jobs:
   test:
-    uses: octokit/.github/.github/workflows/test.yml@add-shared-action
+    uses: octokit/.github/.github/workflows/test.yml@oscard0m:add-shared-action
