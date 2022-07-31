@@ -9,3 +9,5 @@ on:
 jobs:
   test:
     uses: oscard0m/.github/.github/workflows/test.yml@add-shared-action
+    with:
+      node_versions: '[14,16,18]'
