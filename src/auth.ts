@@ -102,6 +102,10 @@ export async function auth(
         ...authentication,
       };
 
+      // if (state.onTokenCreated) {
+      state.onTokenCreated(state.authentication, options.type);
+      // }
+
       return state.authentication as
         | OAuthAppAuthentication
         | GitHubAppAuthentication

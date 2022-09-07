@@ -17,12 +17,14 @@ type CommonOAuthAppStrategyOptions = {
   clientId: string;
   clientSecret: string;
   request?: OctokitTypes.RequestInterface;
+  onTokenCreated?: Function;
 };
 type CommonGitHubAppStrategyOptions = {
   clientType?: "github-app";
   clientId: string;
   clientSecret: string;
   request?: OctokitTypes.RequestInterface;
+  onTokenCreated?: Function;
 };
 
 type OAuthAppDeviceFlowOptions = {
@@ -124,6 +126,7 @@ export type OAuthAppState = {
   clientSecret: string;
   clientType: "oauth-app";
   request: OctokitTypes.RequestInterface;
+  onTokenCreated?: Function;
   strategyOptions:
     | WebFlowOptions
     | OAuthAppDeviceFlowOptions
@@ -144,6 +147,7 @@ export type GitHubAppState = {
   clientSecret: string;
   clientType: "github-app";
   request: OctokitTypes.RequestInterface;
+  onTokenCreated?: Function;
   strategyOptions:
     | WebFlowOptions
     | GitHubDeviceFlowOptions
