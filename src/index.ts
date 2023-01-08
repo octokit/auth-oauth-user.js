@@ -47,6 +47,7 @@ export function createOAuthUserAuth({
       "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
     },
   }),
+  onTokenCreated,
   ...strategyOptions
 }: OAuthAppStrategyOptions | GitHubAppStrategyOptions):
   | OAuthAppAuthInterface
@@ -55,6 +56,7 @@ export function createOAuthUserAuth({
     clientType,
     clientId,
     clientSecret,
+    onTokenCreated,
     strategyOptions,
     request,
   });
