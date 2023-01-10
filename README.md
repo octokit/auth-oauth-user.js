@@ -614,7 +614,6 @@ The differences are
 
 1. `scopes` is only present for OAuth Apps
 2. `refreshToken`, `expiresAt`, `refreshTokenExpiresAt` are only present for GitHub Apps, and only if token expiration is enabled
-3. `onTokenCreated` is only present for OAuth Apps and GitHub Apps
 
 ### OAuth APP authentication token
 
