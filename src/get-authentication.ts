@@ -32,6 +32,7 @@ export async function getAuthentication(
       clientId: state.clientId,
       clientSecret: state.clientSecret,
       clientType: state.clientType,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
       request: state.request,
     });
@@ -48,6 +49,7 @@ export async function getAuthentication(
     const deviceAuth = createOAuthDeviceAuth({
       clientType: state.clientType,
       clientId: state.clientId,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
       request: state.request,
     });
@@ -70,6 +72,7 @@ export async function getAuthentication(
       clientId: state.clientId,
       clientSecret: state.clientSecret,
       clientType: state.clientType,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
     };
   }

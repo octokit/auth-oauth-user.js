@@ -80,6 +80,10 @@ export async function auth(
     if (!currentAuthentication.hasOwnProperty("expiresAt")) {
       throw new Error("[@octokit/auth-oauth-user] Refresh token missing");
     }
+
+    await state.onTokenCreated?.(state.authentication, {
+      type: options.type,
+    });
   }
 
   // check or reset token
@@ -101,6 +105,12 @@ export async function auth(
         // @ts-expect-error TBD
         ...authentication,
       };
+
+      if (options.type === "reset") {
+        await state.onTokenCreated?.(state.authentication, {
+          type: options.type,
+        });
+      }
 
       return state.authentication as
         | OAuthAppAuthentication

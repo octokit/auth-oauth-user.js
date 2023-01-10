@@ -281,7 +281,7 @@ The unguessable random string you provided in [Step 1 of GitHub's OAuth web appl
         <code>string</code>
       </th>
       <td>
-        
+
 The <code>redirect_uri</code> parameter you provided in [Step 1 of GitHub's OAuth web application flow](https://docs.github.com/en/developers/apps/authorizing-oauth-apps#1-request-a-users-github-identity).
 
 </td>
@@ -711,6 +711,17 @@ The differences are
     </tr>
     <tr>
       <th>
+        <code>onTokenCreated</code>
+      </th>
+      <th>
+        <code>function</code>
+      </th>
+      <td>
+        callback invoked when a token is "reset" or "refreshed"
+      </td>
+    </tr>
+    <tr>
+      <th>
         <code>invalid</code>
       </th>
       <th>
@@ -806,6 +817,17 @@ Either `undefined` or `true`. Will be set to `true` if the token was invalided e
       </th>
       <td>
         The user access token
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>onTokenCreated</code>
+      </th>
+      <th>
+        <code>function</code>
+      </th>
+      <td>
+        callback invoked when a token is "reset" or "refreshed"
       </td>
     </tr>
     <tr>

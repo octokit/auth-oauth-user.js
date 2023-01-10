@@ -11,19 +11,21 @@ export type WebFlowOptions = {
 };
 
 // STRATEGY OPTIONS
+type CommonAppStrategyOptions = {
+  clientType?: ClientType;
+  clientId: string;
+  clientSecret: string;
+  request?: OctokitTypes.RequestInterface;
+  onTokenCreated?: OnToketCreatedCallback;
+};
 
 type CommonOAuthAppStrategyOptions = {
   clientType?: "oauth-app";
-  clientId: string;
-  clientSecret: string;
-  request?: OctokitTypes.RequestInterface;
-};
+} & CommonAppStrategyOptions;
+
 type CommonGitHubAppStrategyOptions = {
   clientType?: "github-app";
-  clientId: string;
-  clientSecret: string;
-  request?: OctokitTypes.RequestInterface;
-};
+} & CommonAppStrategyOptions;
 
 type OAuthAppDeviceFlowOptions = {
   onVerification: DeviceTypes.OAuthAppStrategyOptions["onVerification"];
@@ -119,11 +121,21 @@ export interface GitHubAppAuthInterface {
 
 // INTERNAL STATE
 
+type OnToketCreatedCallback = (
+  authentication:
+    | OAuthAppAuthentication
+    | GitHubAppAuthentication
+    | GitHubAppAuthenticationWithExpiration
+    | undefined,
+  options: OAuthAppAuthOptions | GitHubAppAuthOptions
+) => void | Promise<void>;
+
 export type OAuthAppState = {
   clientId: string;
   clientSecret: string;
   clientType: "oauth-app";
   request: OctokitTypes.RequestInterface;
+  onTokenCreated?: CommonAppStrategyOptions["onTokenCreated"];
   strategyOptions:
     | WebFlowOptions
     | OAuthAppDeviceFlowOptions
@@ -144,6 +156,7 @@ export type GitHubAppState = {
   clientSecret: string;
   clientType: "github-app";
   request: OctokitTypes.RequestInterface;
+  onTokenCreated?: CommonAppStrategyOptions["onTokenCreated"];
   strategyOptions:
     | WebFlowOptions
     | GitHubDeviceFlowOptions

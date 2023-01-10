@@ -514,6 +514,86 @@ describe("refreshing tokens", () => {
     MockDate.reset();
   });
 
+  test('auth({ type: "refresh" }) with "onTokenCreated()" option', async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      (url, options) => {
+        expect(url).toEqual("https://github.com/login/oauth/access_token");
+        expect(options.headers).toEqual(
+          expect.objectContaining({
+            accept: "application/json",
+            "content-type": "application/json; charset=utf-8",
+          })
+        );
+        expect(JSON.parse(options.body as string)).toEqual({
+          client_id: "lv1.1234567890abcdef",
+          client_secret: "secret",
+          refresh_token: "r1.token123",
+          grant_type: "refresh_token",
+        });
+
+        return true;
+      },
+      {
+        body: {
+          access_token: "token456",
+          scope: "",
+          token_type: "bearer",
+          expires_in: 28800,
+          refresh_token: "r1.token456",
+          refresh_token_expires_in: 15897600,
+        },
+        headers: {
+          date: "Thu, 1 Jan 1970 00:00:00 GMT",
+        },
+      }
+    );
+
+    const expectedAuthenticationObject = {
+      type: "token",
+      tokenType: "oauth",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token456",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token456",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+    };
+
+    const auth = createOAuthUserAuth({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token123",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+      onTokenCreated: (authentication, options) => {
+        expect(authentication).toStrictEqual(expectedAuthenticationObject);
+        expect(options).toStrictEqual({ type: "refresh" });
+      },
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    MockDate.set(0);
+    const authentication = await auth({ type: "refresh" });
+
+    expect(authentication).toEqual(expectedAuthenticationObject);
+
+    expect.assertions(6);
+
+    MockDate.reset();
+  });
+
   test('auth({ type: "refresh" }) with OAuth App token', async () => {
     const auth = createOAuthUserAuth({
       clientType: "oauth-app",
@@ -650,6 +730,65 @@ describe("auth({ type: 'check' })", () => {
     });
   });
 
+  it("calls 'onTokenCreated' if defined as auth option", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      "https://api.github.com/applications/1234567890abcdef1234/token",
+      {
+        scopes: [],
+      },
+      {
+        headers: {
+          accept: "application/vnd.github.v3+json",
+          "user-agent": "test",
+          authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+          "content-type": "application/json; charset=utf-8",
+        },
+        body: { access_token: "token123" },
+      }
+    );
+
+    const expectedAuthenticationObject = {
+      type: "token",
+      tokenType: "oauth",
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+    };
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+      onTokenCreated: (authentication, options) => {
+        expect(authentication).toStrictEqual(expectedAuthenticationObject);
+        expect(options).toStrictEqual({ type: "check" });
+      },
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    const authentication = await auth({
+      type: "check",
+    });
+
+    expect(authentication).toEqual(expectedAuthenticationObject);
+
+    // Assures onTokenCreated() has not been invoked
+    expect.assertions(1);
+  });
+
   it("is not valid", async () => {
     const mock = fetchMock
       .sandbox()
@@ -759,6 +898,80 @@ describe("auth({ type: 'reset' })", () => {
     await auth({
       type: "check",
     });
+  });
+
+  it("calls 'onTokenCreated' if defined as auth option", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .patchOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        {
+          token: "token456",
+          scopes: [],
+        },
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token123" },
+        }
+      )
+      .postOnce(
+        "https://api.github.com/applications/1234567890abcdef1234/token",
+        {},
+        {
+          headers: {
+            accept: "application/vnd.github.v3+json",
+            "user-agent": "test",
+            authorization: "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6c2VjcmV0",
+            "content-type": "application/json; charset=utf-8",
+          },
+          body: { access_token: "token456" },
+        }
+      );
+
+    const expectedAuthenticationObject = {
+      type: "token",
+      tokenType: "oauth",
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token456",
+      scopes: [],
+    };
+
+    const auth = createOAuthUserAuth({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "secret",
+      token: "token123",
+      scopes: [],
+      onTokenCreated: (authentication, options) => {
+        expect(authentication).toStrictEqual(expectedAuthenticationObject);
+        expect(options).toStrictEqual({ type: "reset" });
+      },
+
+      // pass request mock for testing
+      request: request.defaults({
+        headers: {
+          "user-agent": "test",
+        },
+        request: {
+          fetch: mock,
+        },
+      }),
+    });
+
+    const authentication1 = await auth({
+      type: "reset",
+    });
+
+    expect(authentication1).toEqual(expectedAuthenticationObject);
+
+    expect.assertions(3);
   });
 
   it("reset fails due to invalid token", async () => {
