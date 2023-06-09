@@ -4,7 +4,7 @@ import { request as octokitRequest } from "@octokit/request";
 import { VERSION } from "./version";
 import { auth } from "./auth";
 import { hook } from "./hook";
-import {
+import type {
   State,
   OAuthAppStrategyOptions,
   GitHubAppStrategyOptions,
@@ -12,7 +12,7 @@ import {
   GitHubAppAuthInterface,
 } from "./types";
 
-export {
+export type {
   OAuthAppStrategyOptionsWebFlow,
   GitHubAppStrategyOptionsWebFlow,
   OAuthAppStrategyOptionsDeviceFlow,
