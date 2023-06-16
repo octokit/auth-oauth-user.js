@@ -22,8 +22,8 @@
   "author": "Gregor Martynus (https://dev.to/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-oauth-device": "^5.0.0",
-    "@octokit/oauth-methods": "^3.0.0",
+    "@octokit/auth-oauth-device": "^5.0.2",
+    "@octokit/oauth-methods": "^3.0.1",
     "@octokit/request": "^7.0.0",
     "@octokit/types": "^10.0.0",
     "btoa-lite": "^1.0.0",
@@ -46,7 +46,6 @@
     "ts-jest": "^29.0.0",
     "typescript": "^5.0.0"
   },
-  "peerDependencies": {},
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": [
