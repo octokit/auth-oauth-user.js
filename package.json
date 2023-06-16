@@ -22,7 +22,7 @@
   "author": "Gregor Martynus (https://dev.to/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-oauth-device": "^4.0.0",
+    "@octokit/auth-oauth-device": "^5.0.0",
     "@octokit/oauth-methods": "^3.0.0",
     "@octokit/request": "^6.0.0",
     "@octokit/types": "^9.0.0",
