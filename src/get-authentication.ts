@@ -1,6 +1,6 @@
 // @ts-nocheck there is only place for one of us in this file. And it's not you, TS
 
-import {
+import type {
   OAuthAppState,
   GitHubAppState,
   OAuthAppAuthentication,
