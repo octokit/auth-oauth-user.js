@@ -18,25 +18,25 @@ export async function hook(
   state: OAuthAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters
+  parameters: RequestParameters,
 ): Promise<AnyResponse>;
 
 export async function hook(
   state: GitHubAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters
+  parameters: RequestParameters,
 ): Promise<AnyResponse>;
 
 export async function hook(
   state: OAuthAppState | GitHubAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters = {}
+  parameters: RequestParameters = {},
 ): Promise<AnyResponse> {
   const endpoint = request.endpoint.merge(
     route as string,
-    parameters
+    parameters,
   ) as EndpointDefaults & { url: string };
 
   // Do not intercept OAuth Web/Device flow request

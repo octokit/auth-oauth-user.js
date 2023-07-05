@@ -32,10 +32,10 @@ export type {
 export { requiresBasicAuth } from "./requires-basic-auth";
 
 export function createOAuthUserAuth(
-  options: OAuthAppStrategyOptions
+  options: OAuthAppStrategyOptions,
 ): OAuthAppAuthInterface;
 export function createOAuthUserAuth(
-  options: GitHubAppStrategyOptions
+  options: GitHubAppStrategyOptions,
 ): GitHubAppAuthInterface;
 
 export function createOAuthUserAuth({

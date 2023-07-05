@@ -13,14 +13,14 @@ import { createOAuthDeviceAuth } from "@octokit/auth-oauth-device";
 import { exchangeWebFlowCode } from "@octokit/oauth-methods";
 
 export async function getAuthentication(
-  state: OAuthAppState
+  state: OAuthAppState,
 ): Promise<OAuthAppAuthentication>;
 export async function getAuthentication(
-  state: GitHubAppState
+  state: GitHubAppState,
 ): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
 
 export async function getAuthentication(
-  state: OAuthAppState | GitHubAppState
+  state: OAuthAppState | GitHubAppState,
 ): Promise<
   | OAuthAppAuthentication
   | GitHubAppAuthentication

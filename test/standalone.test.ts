@@ -25,7 +25,7 @@ describe("Exchange code from OAuth web flow", () => {
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
         },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -77,7 +77,7 @@ describe("Exchange code from OAuth web flow", () => {
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
         },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -137,7 +137,7 @@ describe("Exchange code from OAuth web flow", () => {
           code: "code123",
           redirect_uri: "https://acme-inc.com/login",
         },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -199,7 +199,7 @@ describe("OAuth device flow", () => {
             client_id: "1234567890abcdef1234",
             scope: "",
           },
-        }
+        },
       )
       .postOnce(
         "https://github.com/login/oauth/access_token",
@@ -219,7 +219,7 @@ describe("OAuth device flow", () => {
             grant_type: "urn:ietf:params:oauth:grant-type:device_code",
           },
           overwriteRoutes: false,
-        }
+        },
       );
 
     const onVerification = jest.fn();
@@ -290,7 +290,7 @@ test("Invalid strategy options", async () => {
   const auth = createOAuthUserAuth({});
 
   await expect(async () => await auth()).rejects.toThrow(
-    "[@octokit/auth-oauth-user] Invalid strategy options"
+    "[@octokit/auth-oauth-user] Invalid strategy options",
   );
 });
 
@@ -313,7 +313,7 @@ test("Caches authentication for successive calls", async () => {
         client_secret: "secret",
         code: "code123",
       },
-    }
+    },
   );
 
   const auth = createOAuthUserAuth({
@@ -357,7 +357,7 @@ describe("refreshing tokens", () => {
           expect.objectContaining({
             accept: "application/json",
             "content-type": "application/json; charset=utf-8",
-          })
+          }),
         );
         expect(JSON.parse(options.body as string)).toEqual({
           client_id: "lv1.1234567890abcdef",
@@ -380,7 +380,7 @@ describe("refreshing tokens", () => {
         headers: {
           date: "Thu, 1 Jan 1970 10:00:00 GMT",
         },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -450,7 +450,7 @@ describe("refreshing tokens", () => {
           expect.objectContaining({
             accept: "application/json",
             "content-type": "application/json; charset=utf-8",
-          })
+          }),
         );
         expect(JSON.parse(options.body as string)).toEqual({
           client_id: "lv1.1234567890abcdef",
@@ -473,7 +473,7 @@ describe("refreshing tokens", () => {
         headers: {
           date: "Thu, 1 Jan 1970 00:00:00 GMT",
         },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -522,7 +522,7 @@ describe("refreshing tokens", () => {
           expect.objectContaining({
             accept: "application/json",
             "content-type": "application/json; charset=utf-8",
-          })
+          }),
         );
         expect(JSON.parse(options.body as string)).toEqual({
           client_id: "lv1.1234567890abcdef",
@@ -545,7 +545,7 @@ describe("refreshing tokens", () => {
         headers: {
           date: "Thu, 1 Jan 1970 00:00:00 GMT",
         },
-      }
+      },
     );
 
     const expectedAuthenticationObject = {
@@ -605,7 +605,7 @@ describe("refreshing tokens", () => {
 
     // @ts-expect-error "refresh" is not permitted for OAuth Apps
     await expect(async () => await auth({ type: "refresh" })).rejects.toThrow(
-      "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
+      "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens",
     );
   });
 
@@ -618,7 +618,7 @@ describe("refreshing tokens", () => {
     });
 
     await expect(async () => await auth({ type: "refresh" })).rejects.toThrow(
-      "[@octokit/auth-oauth-user] Refresh token missing"
+      "[@octokit/auth-oauth-user] Refresh token missing",
     );
   });
 });
@@ -638,7 +638,7 @@ describe("auth({ type: 'get' })", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: { access_token: "token123" },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -694,7 +694,7 @@ describe("auth({ type: 'check' })", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: { access_token: "token123" },
-      }
+      },
     );
 
     const auth = createOAuthUserAuth({
@@ -744,7 +744,7 @@ describe("auth({ type: 'check' })", () => {
           "content-type": "application/json; charset=utf-8",
         },
         body: { access_token: "token123" },
-      }
+      },
     );
 
     const expectedAuthenticationObject = {
@@ -794,7 +794,7 @@ describe("auth({ type: 'check' })", () => {
       .sandbox()
       .postOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
-        404
+        404,
       );
 
     const auth = createOAuthUserAuth({
@@ -819,12 +819,12 @@ describe("auth({ type: 'check' })", () => {
       async () =>
         await auth({
           type: "check",
-        })
+        }),
     ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
 
     // rejects without sending another request
     await expect(async () => await auth()).rejects.toThrow(
-      "[@octokit/auth-oauth-user] Token is invalid"
+      "[@octokit/auth-oauth-user] Token is invalid",
     );
   });
 });
@@ -847,7 +847,7 @@ describe("auth({ type: 'reset' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       )
       .postOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
@@ -860,7 +860,7 @@ describe("auth({ type: 'reset' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token456" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -917,7 +917,7 @@ describe("auth({ type: 'reset' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       )
       .postOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
@@ -930,7 +930,7 @@ describe("auth({ type: 'reset' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token456" },
-        }
+        },
       );
 
     const expectedAuthenticationObject = {
@@ -988,7 +988,7 @@ describe("auth({ type: 'reset' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -1013,7 +1013,7 @@ describe("auth({ type: 'reset' })", () => {
       async () =>
         await auth({
           type: "reset",
-        })
+        }),
     ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
   });
 });
@@ -1033,7 +1033,7 @@ describe("auth({ type: 'delete' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -1062,7 +1062,7 @@ describe("auth({ type: 'delete' })", () => {
       async () =>
         await await auth({
           type: "check",
-        })
+        }),
     ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
   });
 
@@ -1080,7 +1080,7 @@ describe("auth({ type: 'delete' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -1104,7 +1104,7 @@ describe("auth({ type: 'delete' })", () => {
     expect(
       await auth({
         type: "delete",
-      })
+      }),
     ).toEqual(expect.objectContaining({ invalid: true }));
   });
 });
@@ -1124,7 +1124,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -1153,7 +1153,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
       async () =>
         await await auth({
           type: "check",
-        })
+        }),
     ).rejects.toThrow("[@octokit/auth-oauth-user] Token is invalid");
   });
 
@@ -1171,7 +1171,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
             "content-type": "application/json; charset=utf-8",
           },
           body: { access_token: "token123" },
-        }
+        },
       );
 
     const auth = createOAuthUserAuth({
@@ -1195,7 +1195,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
     expect(
       await auth({
         type: "deleteAuthorization",
-      })
+      }),
     ).toEqual(expect.objectContaining({ invalid: true }));
   });
 });
