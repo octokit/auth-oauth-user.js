@@ -11,7 +11,7 @@ describe("Octokit + OAuth web flow", () => {
         expect.objectContaining({
           accept: "application/json",
           "content-type": "application/json; charset=utf-8",
-        })
+        }),
       );
 
       return true;
@@ -23,7 +23,7 @@ describe("Octokit + OAuth web flow", () => {
         expect.objectContaining({
           accept: "application/vnd.github.v3+json",
           authorization: "token token123",
-        })
+        }),
       );
 
       return true;
@@ -67,7 +67,7 @@ describe("Octokit + OAuth web flow", () => {
         expect.objectContaining({
           accept: "application/json",
           "content-type": "application/json; charset=utf-8",
-        })
+        }),
       );
 
       return true;
@@ -79,7 +79,7 @@ describe("Octokit + OAuth web flow", () => {
         expect.objectContaining({
           accept: "application/vnd.github.v3+json",
           authorization: "token token123",
-        })
+        }),
       );
 
       return true;
@@ -121,13 +121,13 @@ describe("Octokit + OAuth web flow", () => {
 test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* requests", async () => {
   const matchCheckTokenRequest: MockMatcherFunction = (url, options) => {
     expect(url).toEqual(
-      "https://api.github.com/applications/1234567890abcdef1234/token"
+      "https://api.github.com/applications/1234567890abcdef1234/token",
     );
     expect(options.headers).toEqual(
       expect.objectContaining({
         authorization:
           "basic MTIzNDU2Nzg5MGFiY2RlZjEyMzQ6MTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3OA==",
-      })
+      }),
     );
     expect(JSON.parse(options.body as string)).toEqual({
       access_token: "token123",
@@ -159,7 +159,7 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
     {
       client_id: "1234567890abcdef1234",
       access_token: "token123",
-    }
+    },
   );
 
   expect(data).toEqual({ ok: true });
@@ -198,7 +198,7 @@ test("Sets no auth auth for OAuth Web flow requests", async () => {
       client_id: "1234567890abcdef1234",
       client_secret: "client_secret",
       code: "code123",
-    }
+    },
   );
 
   expect(data).toEqual({ ok: true });

@@ -103,19 +103,19 @@ export interface OAuthAppAuthInterface {
   hook(
     request: OctokitTypes.RequestInterface,
     route: OctokitTypes.Route | OctokitTypes.EndpointOptions,
-    parameters?: OctokitTypes.RequestParameters
+    parameters?: OctokitTypes.RequestParameters,
   ): Promise<OctokitTypes.OctokitResponse<any>>;
 }
 
 export interface GitHubAppAuthInterface {
-  (options?: GitHubAppAuthOptions): Promise<
-    GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration
-  >;
+  (
+    options?: GitHubAppAuthOptions,
+  ): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
 
   hook(
     request: OctokitTypes.RequestInterface,
     route: OctokitTypes.Route | OctokitTypes.EndpointOptions,
-    parameters?: OctokitTypes.RequestParameters
+    parameters?: OctokitTypes.RequestParameters,
   ): Promise<OctokitTypes.OctokitResponse<any>>;
 }
 
@@ -127,7 +127,7 @@ type OnToketCreatedCallback = (
     | GitHubAppAuthentication
     | GitHubAppAuthenticationWithExpiration
     | undefined,
-  options: OAuthAppAuthOptions | GitHubAppAuthOptions
+  options: OAuthAppAuthOptions | GitHubAppAuthOptions,
 ) => void | Promise<void>;
 
 export type OAuthAppState = {
