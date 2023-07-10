@@ -30,7 +30,7 @@
     "universal-user-agent": "^6.0.0"
   },
   "devDependencies": {
-    "@octokit/core": "^4.0.0",
+    "@octokit/core": "^5.0.0",
     "@octokit/tsconfig": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/jest": "^29.0.0",
