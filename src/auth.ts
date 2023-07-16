@@ -1,4 +1,4 @@
-import {
+import type {
   OAuthAppAuthOptions,
   GitHubAppAuthOptions,
   OAuthAppAuthentication,
@@ -18,17 +18,17 @@ import {
 
 export async function auth(
   state: OAuthAppState,
-  options?: OAuthAppAuthOptions
+  options?: OAuthAppAuthOptions,
 ): Promise<OAuthAppAuthentication>;
 
 export async function auth(
   state: GitHubAppState,
-  options?: GitHubAppAuthOptions
+  options?: GitHubAppAuthOptions,
 ): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
 
 export async function auth(
   state: OAuthAppState | GitHubAppState,
-  options: OAuthAppAuthOptions | GitHubAppAuthOptions = {}
+  options: OAuthAppAuthOptions | GitHubAppAuthOptions = {},
 ): Promise<
   | OAuthAppAuthentication
   | GitHubAppAuthentication
@@ -73,13 +73,17 @@ export async function auth(
   if (options.type === "refresh") {
     if (state.clientType === "oauth-app") {
       throw new Error(
-        "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens"
+        "[@octokit/auth-oauth-user] OAuth Apps do not support expiring tokens",
       );
     }
 
     if (!currentAuthentication.hasOwnProperty("expiresAt")) {
       throw new Error("[@octokit/auth-oauth-user] Refresh token missing");
     }
+
+    await state.onTokenCreated?.(state.authentication, {
+      type: options.type,
+    });
   }
 
   // check or reset token
@@ -101,6 +105,12 @@ export async function auth(
         // @ts-expect-error TBD
         ...authentication,
       };
+
+      if (options.type === "reset") {
+        await state.onTokenCreated?.(state.authentication, {
+          type: options.type,
+        });
+      }
 
       return state.authentication as
         | OAuthAppAuthentication

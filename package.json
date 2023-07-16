@@ -6,9 +6,9 @@
   "version": "0.0.0-development",
   "description": "Octokit authentication strategy for OAuth clients",
   "scripts": {
-    "build": "pika-pack build",
-    "lint": "prettier --check '{src,test}/**/*' README.md package.json",
-    "lint:fix": "prettier --write '{src,test}/**/*' README.md package.json",
+    "build": "node scripts/build.mjs && tsc -p tsconfig.json",
+    "lint": "prettier --check '{src,test,scripts}/**/*' README.md package.json",
+    "lint:fix": "prettier --write '{src,test,scripts}/**/*' README.md package.json",
     "pretest": "npm run -s lint",
     "test": "jest --coverage"
   },
@@ -22,35 +22,39 @@
   "author": "Gregor Martynus (https://dev.to/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-oauth-device": "^4.0.0",
-    "@octokit/oauth-methods": "^2.0.0",
-    "@octokit/request": "^6.0.0",
-    "@octokit/types": "^6.12.2",
+    "@octokit/auth-oauth-device": "^6.0.0",
+    "@octokit/oauth-methods": "^4.0.0",
+    "@octokit/request": "^8.0.2",
+    "@octokit/types": "^11.0.0",
     "btoa-lite": "^1.0.0",
     "universal-user-agent": "^6.0.0"
   },
   "devDependencies": {
-    "@octokit/core": "^4.0.0",
-    "@octokit/tsconfig": "^1.0.2",
-    "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "^0.9.2",
-    "@pika/plugin-build-web": "^0.9.2",
-    "@pika/plugin-ts-standard-pkg": "^0.9.2",
+    "@octokit/core": "^5.0.0",
+    "@octokit/tsconfig": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
-    "@types/jest": "^28.0.0",
-    "@types/node": "^16.0.0",
+    "@types/jest": "^29.0.0",
+    "@types/node": "^18.0.0",
+    "esbuild": "^0.18.0",
     "fetch-mock": "^9.11.0",
-    "jest": "^28.0.0",
+    "glob": "^10.2.7",
+    "jest": "^29.0.0",
     "mockdate": "^3.0.4",
-    "prettier": "2.7.1",
-    "semantic-release": "^19.0.0",
+    "prettier": "3.0.0",
+    "semantic-release": "^21.0.0",
     "semantic-release-plugin-update-version-in-files": "^1.1.0",
-    "ts-jest": "^28.0.0",
-    "typescript": "^4.2.3"
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
   },
-  "peerDependencies": {},
   "jest": {
-    "preset": "ts-jest",
+    "transform": {
+      "^.+\\.(ts|tsx)$": [
+        "ts-jest",
+        {
+          "tsconfig": "test/tsconfig.test.json"
+        }
+      ]
+    },
     "coverageThreshold": {
       "global": {
         "statements": 100,
@@ -59,22 +63,6 @@
         "lines": 100
       }
     }
-  },
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-ts-standard-pkg"
-      ],
-      [
-        "@pika/plugin-build-node",
-        {
-          "minNodeVersion": "14"
-        }
-      ],
-      [
-        "@pika/plugin-build-web"
-      ]
-    ]
   },
   "release": {
     "branches": [
@@ -108,12 +96,7 @@
       ]
     ]
   },
-  "renovate": {
-    "extends": [
-      "github>octokit/.github"
-    ]
-  },
   "engines": {
-    "node": ">= 14"
+    "node": ">= 18"
   }
 }

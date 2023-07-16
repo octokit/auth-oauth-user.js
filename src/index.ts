@@ -4,7 +4,7 @@ import { request as octokitRequest } from "@octokit/request";
 import { VERSION } from "./version";
 import { auth } from "./auth";
 import { hook } from "./hook";
-import {
+import type {
   State,
   OAuthAppStrategyOptions,
   GitHubAppStrategyOptions,
@@ -12,7 +12,7 @@ import {
   GitHubAppAuthInterface,
 } from "./types";
 
-export {
+export type {
   OAuthAppStrategyOptionsWebFlow,
   GitHubAppStrategyOptionsWebFlow,
   OAuthAppStrategyOptionsDeviceFlow,
@@ -32,10 +32,10 @@ export {
 export { requiresBasicAuth } from "./requires-basic-auth";
 
 export function createOAuthUserAuth(
-  options: OAuthAppStrategyOptions
+  options: OAuthAppStrategyOptions,
 ): OAuthAppAuthInterface;
 export function createOAuthUserAuth(
-  options: GitHubAppStrategyOptions
+  options: GitHubAppStrategyOptions,
 ): GitHubAppAuthInterface;
 
 export function createOAuthUserAuth({
@@ -47,6 +47,7 @@ export function createOAuthUserAuth({
       "user-agent": `octokit-auth-oauth-app.js/${VERSION} ${getUserAgent()}`,
     },
   }),
+  onTokenCreated,
   ...strategyOptions
 }: OAuthAppStrategyOptions | GitHubAppStrategyOptions):
   | OAuthAppAuthInterface
@@ -55,6 +56,7 @@ export function createOAuthUserAuth({
     clientType,
     clientId,
     clientSecret,
+    onTokenCreated,
     strategyOptions,
     request,
   });

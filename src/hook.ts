@@ -1,5 +1,5 @@
 import btoa from "btoa-lite";
-import {
+import type {
   EndpointOptions,
   EndpointDefaults,
   OctokitResponse,
@@ -8,7 +8,7 @@ import {
   Route,
 } from "@octokit/types";
 
-import { OAuthAppState, GitHubAppState } from "./types";
+import type { OAuthAppState, GitHubAppState } from "./types";
 import { auth } from "./auth";
 import { requiresBasicAuth } from "./requires-basic-auth";
 
@@ -18,25 +18,25 @@ export async function hook(
   state: OAuthAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters
+  parameters: RequestParameters,
 ): Promise<AnyResponse>;
 
 export async function hook(
   state: GitHubAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters
+  parameters: RequestParameters,
 ): Promise<AnyResponse>;
 
 export async function hook(
   state: OAuthAppState | GitHubAppState,
   request: RequestInterface,
   route: Route | EndpointOptions,
-  parameters: RequestParameters = {}
+  parameters: RequestParameters = {},
 ): Promise<AnyResponse> {
   const endpoint = request.endpoint.merge(
     route as string,
-    parameters
+    parameters,
   ) as EndpointDefaults & { url: string };
 
   // Do not intercept OAuth Web/Device flow request

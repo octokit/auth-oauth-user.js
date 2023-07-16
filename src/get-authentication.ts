@@ -1,6 +1,6 @@
 // @ts-nocheck there is only place for one of us in this file. And it's not you, TS
 
-import {
+import type {
   OAuthAppState,
   GitHubAppState,
   OAuthAppAuthentication,
@@ -13,14 +13,14 @@ import { createOAuthDeviceAuth } from "@octokit/auth-oauth-device";
 import { exchangeWebFlowCode } from "@octokit/oauth-methods";
 
 export async function getAuthentication(
-  state: OAuthAppState
+  state: OAuthAppState,
 ): Promise<OAuthAppAuthentication>;
 export async function getAuthentication(
-  state: GitHubAppState
+  state: GitHubAppState,
 ): Promise<GitHubAppAuthentication | GitHubAppAuthenticationWithExpiration>;
 
 export async function getAuthentication(
-  state: OAuthAppState | GitHubAppState
+  state: OAuthAppState | GitHubAppState,
 ): Promise<
   | OAuthAppAuthentication
   | GitHubAppAuthentication
@@ -32,6 +32,7 @@ export async function getAuthentication(
       clientId: state.clientId,
       clientSecret: state.clientSecret,
       clientType: state.clientType,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
       request: state.request,
     });
@@ -48,6 +49,7 @@ export async function getAuthentication(
     const deviceAuth = createOAuthDeviceAuth({
       clientType: state.clientType,
       clientId: state.clientId,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
       request: state.request,
     });
@@ -70,6 +72,7 @@ export async function getAuthentication(
       clientId: state.clientId,
       clientSecret: state.clientSecret,
       clientType: state.clientType,
+      onTokenCreated: state.onTokenCreated,
       ...state.strategyOptions,
     };
   }
