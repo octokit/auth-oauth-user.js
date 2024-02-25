@@ -16,7 +16,7 @@ type CommonAppStrategyOptions = {
   clientId: string;
   clientSecret: string;
   request?: OctokitTypes.RequestInterface;
-  onTokenCreated?: OnToketCreatedCallback;
+  onTokenCreated?: OnTokenCreatedCallback;
 };
 
 type CommonOAuthAppStrategyOptions = {
@@ -121,7 +121,7 @@ export interface GitHubAppAuthInterface {
 
 // INTERNAL STATE
 
-type OnToketCreatedCallback = (
+type OnTokenCreatedCallback = (
   authentication:
     | OAuthAppAuthentication
     | GitHubAppAuthentication

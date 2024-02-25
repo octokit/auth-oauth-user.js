@@ -165,7 +165,7 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
   expect(data).toEqual({ ok: true });
 });
 
-test("Sets no auth auth for OAuth Web flow requests", async () => {
+test("Sets no auth for OAuth Web flow requests", async () => {
   const matchCreateTokenRequest: MockMatcherFunction = (url, options) => {
     expect(url).toEqual("https://github.com/login/oauth/access_token");
     // @ts-ignore
