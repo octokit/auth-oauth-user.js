@@ -76,7 +76,7 @@ Node
 Install with `npm install @octokit/auth-oauth-user`
 
 ```js
-const { createOAuthUserAuth } = require("@octokit/auth-oauth-user");
+import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 ```
 
 </td></tr>
@@ -167,8 +167,8 @@ Node
 Install with `npm install @octokit/core @octokit/auth-oauth-user`. Optionally replace `@octokit/core` with a compatible module
 
 ```js
-const { Octokit } = require("@octokit/core");
-const { createOAuthUserAuth } = require("@octokit/auth-oauth-user");
+import { Octokit } from "@octokit/core";
+import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 ```
 
 </td></tr>
@@ -297,7 +297,7 @@ The <code>redirect_uri</code> parameter you provided in [Step 1 of GitHub's OAut
         You can pass in your own <a href="https://github.com/octokit/request.js"><code>@octokit/request</code></a> instance. For usage with enterprise, set <code>baseUrl</code> to the API root endpoint. Example:
 
 ```js
-const { request } = require("@octokit/request");
+import { request } from "@octokit/request";
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
@@ -401,7 +401,7 @@ const auth = createOAuthUserAuth({
         You can pass in your own <a href="https://github.com/octokit/request.js"><code>@octokit/request</code></a> instance. For usage with enterprise, set <code>baseUrl</code> to the API root endpoint. Example:
 
 ```js
-const { request } = require("@octokit/request");
+import { request } from "@octokit/request";
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
@@ -539,7 +539,7 @@ createOAuthAppAuth({
         You can pass in your own <a href="https://github.com/octokit/request.js"><code>@octokit/request</code></a> instance. For usage with enterprise, set <code>baseUrl</code> to the API root endpoint. Example:
 
 ```js
-const { request } = require("@octokit/request");
+import { request } from "@octokit/request";
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",

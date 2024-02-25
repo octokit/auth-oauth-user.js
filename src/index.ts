@@ -1,16 +1,16 @@
 import { getUserAgent } from "universal-user-agent";
 import { request as octokitRequest } from "@octokit/request";
 
-import { VERSION } from "./version";
-import { auth } from "./auth";
-import { hook } from "./hook";
+import { VERSION } from "./version.js";
+import { auth } from "./auth.js";
+import { hook } from "./hook.js";
 import type {
   State,
   OAuthAppStrategyOptions,
   GitHubAppStrategyOptions,
   OAuthAppAuthInterface,
   GitHubAppAuthInterface,
-} from "./types";
+} from "./types.js";
 
 export type {
   OAuthAppStrategyOptionsWebFlow,
@@ -27,9 +27,9 @@ export type {
   OAuthAppAuthentication,
   GitHubAppAuthentication,
   GitHubAppAuthenticationWithExpiration,
-} from "./types";
+} from "./types.js";
 
-export { requiresBasicAuth } from "./requires-basic-auth";
+export { requiresBasicAuth } from "./requires-basic-auth.js";
 
 export function createOAuthUserAuth(
   options: OAuthAppStrategyOptions,

@@ -1,8 +1,9 @@
 import fetchMock from "fetch-mock";
 import MockDate from "mockdate";
 import { request } from "@octokit/request";
+import { jest } from "@jest/globals";
 
-import { createOAuthUserAuth } from "../src/index";
+import { createOAuthUserAuth } from "../src/index.js";
 
 describe("Exchange code from OAuth web flow", () => {
   test("README example", async () => {

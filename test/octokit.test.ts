@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/core";
-import fetchMock, { MockMatcherFunction } from "fetch-mock";
+import fetchMock, { type MockMatcherFunction } from "fetch-mock";
 
-import { createOAuthUserAuth } from "../src/index";
+import { createOAuthUserAuth } from "../src/index.js";
 
 describe("Octokit + OAuth web flow", () => {
   it("README example", async () => {

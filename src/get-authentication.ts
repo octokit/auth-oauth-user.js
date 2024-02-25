@@ -7,7 +7,7 @@ import type {
   GitHubAppAuthentication,
   GitHubAppAuthenticationWithExpiration,
   Authentication,
-} from "./types";
+} from "./types.js";
 
 import { createOAuthDeviceAuth } from "@octokit/auth-oauth-device";
 import { exchangeWebFlowCode } from "@octokit/oauth-methods";
