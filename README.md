@@ -539,7 +539,7 @@ createOAuthAppAuth({
         You can pass in your own <a href="https://github.com/octokit/request.js"><code>@octokit/request</code></a> instance. For usage with enterprise, set <code>baseUrl</code> to the API root endpoint. Example:
 
 ```js
-const { request } = require("@octokit/request");
+import { request } from "@octokit/request";
 createOAuthAppAuth({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
