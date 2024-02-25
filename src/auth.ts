@@ -6,8 +6,8 @@ import type {
   GitHubAppAuthenticationWithExpiration,
   OAuthAppState,
   GitHubAppState,
-} from "./types";
-import { getAuthentication } from "./get-authentication";
+} from "./types.js";
+import { getAuthentication } from "./get-authentication.js";
 import {
   checkToken,
   deleteAuthorization,

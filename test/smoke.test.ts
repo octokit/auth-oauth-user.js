@@ -1,4 +1,4 @@
-import { createOAuthUserAuth, requiresBasicAuth } from "../src";
+import { createOAuthUserAuth, requiresBasicAuth } from "../src/index.js";
 
 describe("Smoke test", () => {
   it("createOAuthUserAuth is a function", () => {

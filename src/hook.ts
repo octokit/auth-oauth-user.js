@@ -1,4 +1,3 @@
-import btoa from "btoa-lite";
 import type {
   EndpointOptions,
   EndpointDefaults,
@@ -8,9 +7,9 @@ import type {
   Route,
 } from "@octokit/types";
 
-import type { OAuthAppState, GitHubAppState } from "./types";
-import { auth } from "./auth";
-import { requiresBasicAuth } from "./requires-basic-auth";
+import type { OAuthAppState, GitHubAppState } from "./types.js";
+import { auth } from "./auth.js";
+import { requiresBasicAuth } from "./requires-basic-auth.js";
 
 type AnyResponse = OctokitResponse<any>;
 
