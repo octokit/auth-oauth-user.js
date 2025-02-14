@@ -1,6 +1,6 @@
-import * as OctokitTypes from "@octokit/types";
-import * as DeviceTypes from "@octokit/auth-oauth-device";
-import * as OAuthMethodsTypes from "@octokit/oauth-methods";
+import type * as OctokitTypes from "@octokit/types";
+import type * as DeviceTypes from "@octokit/auth-oauth-device";
+import type * as OAuthMethodsTypes from "@octokit/oauth-methods";
 
 export type ClientType = "oauth-app" | "github-app";
 
