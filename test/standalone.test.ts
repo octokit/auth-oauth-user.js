@@ -1,7 +1,7 @@
+import { describe, expect, it, test, vi } from "vitest";
 import fetchMock from "fetch-mock";
 import MockDate from "mockdate";
 import { request } from "@octokit/request";
-import { jest } from "@jest/globals";
 
 import { createOAuthUserAuth } from "../src/index.js";
 
@@ -187,7 +187,7 @@ describe("OAuth device flow", () => {
           user_code: "usercode123",
           verification_uri: "https://github.com/login/device",
           expires_in: 900,
-          // use low number because jest.useFakeTimers() & jest.runAllTimers() didn't work for me
+          // use low number because vi.useFakeTimers() & vi.runAllTimers() didn't work for me
           interval: 0.005,
         },
         {
@@ -223,7 +223,7 @@ describe("OAuth device flow", () => {
         },
       );
 
-    const onVerification = jest.fn();
+    const onVerification = vi.fn();
     const auth = createOAuthUserAuth({
       clientId: "1234567890abcdef1234",
       clientSecret: "secret",
