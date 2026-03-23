@@ -41,7 +41,7 @@
     "mockdate": "^3.0.4",
     "prettier": "3.7.4",
     "semantic-release-plugin-update-version-in-files": "^2.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^6.0.0",
     "vitest": "^3.0.0"
   },
   "release": {
