@@ -143,7 +143,7 @@ export async function auth(
         request: state.request,
       });
     } catch (error: any) {
-      /* v8 ignore next */
+      /* v8 ignore next -- @preserve */
       if (error.status !== 404) throw error;
     }
 
