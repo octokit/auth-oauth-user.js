@@ -7,7 +7,7 @@ import { createOAuthUserAuth } from "../src/index.js";
 
 describe("Exchange code from OAuth web flow", () => {
   test("README example", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://github.com/login/oauth/access_token",
       {
         access_token: "token123",
@@ -40,7 +40,7 @@ describe("Exchange code from OAuth web flow", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -59,7 +59,7 @@ describe("Exchange code from OAuth web flow", () => {
   });
 
   test("GitHub App credentials", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://github.com/login/oauth/access_token",
       {
         access_token: "token123",
@@ -93,7 +93,7 @@ describe("Exchange code from OAuth web flow", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -111,7 +111,7 @@ describe("Exchange code from OAuth web flow", () => {
   });
 
   test("GitHub App credentials with expiring tokens enabled", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://github.com/login/oauth/access_token",
       {
         body: {
@@ -153,7 +153,7 @@ describe("Exchange code from OAuth web flow", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -178,7 +178,7 @@ describe("Exchange code from OAuth web flow", () => {
 describe("OAuth device flow", () => {
   test("README example", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
 
       .postOnce(
         "https://github.com/login/device/code",
@@ -219,7 +219,6 @@ describe("OAuth device flow", () => {
             device_code: "devicecode123",
             grant_type: "urn:ietf:params:oauth:grant-type:device_code",
           },
-          overwriteRoutes: false,
         },
       );
 
@@ -234,7 +233,7 @@ describe("OAuth device flow", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -296,7 +295,7 @@ test("Invalid strategy options", async () => {
 });
 
 test("Caches authentication for successive calls", async () => {
-  const mock = fetchMock.sandbox().postOnce(
+  const mock = fetchMock.createInstance().postOnce(
     "https://github.com/login/oauth/access_token",
     {
       access_token: "token123",
@@ -327,7 +326,7 @@ test("Caches authentication for successive calls", async () => {
         "user-agent": "test",
       },
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     }),
   });
@@ -351,8 +350,8 @@ test("Caches authentication for successive calls", async () => {
 
 describe("refreshing tokens", () => {
   test("auto-refreshing for expiring tokens", async () => {
-    const mock = fetchMock.sandbox().postOnce(
-      (url, options) => {
+    const mock = fetchMock.createInstance().postOnce(
+      ({ url, options }) => {
         expect(url).toEqual("https://github.com/login/oauth/access_token");
         expect(options.headers).toEqual(
           expect.objectContaining({
@@ -399,7 +398,7 @@ describe("refreshing tokens", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -444,8 +443,8 @@ describe("refreshing tokens", () => {
   });
 
   test('auth({ type: "refresh" })', async () => {
-    const mock = fetchMock.sandbox().postOnce(
-      (url, options) => {
+    const mock = fetchMock.createInstance().postOnce(
+      ({ url, options }) => {
         expect(url).toEqual("https://github.com/login/oauth/access_token");
         expect(options.headers).toEqual(
           expect.objectContaining({
@@ -492,7 +491,7 @@ describe("refreshing tokens", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -516,8 +515,8 @@ describe("refreshing tokens", () => {
   });
 
   test('auth({ type: "refresh" }) with "onTokenCreated()" option', async () => {
-    const mock = fetchMock.sandbox().postOnce(
-      (url, options) => {
+    const mock = fetchMock.createInstance().postOnce(
+      ({ url, options }) => {
         expect(url).toEqual("https://github.com/login/oauth/access_token");
         expect(options.headers).toEqual(
           expect.objectContaining({
@@ -580,7 +579,7 @@ describe("refreshing tokens", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -626,7 +625,7 @@ describe("refreshing tokens", () => {
 
 describe("auth({ type: 'get' })", () => {
   it("is valid", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://api.github.com/applications/1234567890abcdef1234/token",
       {
         scopes: [],
@@ -655,7 +654,7 @@ describe("auth({ type: 'get' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -682,7 +681,7 @@ describe("auth({ type: 'get' })", () => {
 
 describe("auth({ type: 'check' })", () => {
   it("is valid", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://api.github.com/applications/1234567890abcdef1234/token",
       {
         scopes: [],
@@ -711,7 +710,7 @@ describe("auth({ type: 'check' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -732,7 +731,7 @@ describe("auth({ type: 'check' })", () => {
   });
 
   it("calls 'onTokenCreated' if defined as auth option", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://api.github.com/applications/1234567890abcdef1234/token",
       {
         scopes: [],
@@ -775,7 +774,7 @@ describe("auth({ type: 'check' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -792,7 +791,7 @@ describe("auth({ type: 'check' })", () => {
 
   it("is not valid", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         404,
@@ -811,7 +810,7 @@ describe("auth({ type: 'check' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -833,7 +832,7 @@ describe("auth({ type: 'check' })", () => {
 describe("auth({ type: 'reset' })", () => {
   it("uses new authentication after reset", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .patchOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         {
@@ -877,7 +876,7 @@ describe("auth({ type: 'reset' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -903,7 +902,7 @@ describe("auth({ type: 'reset' })", () => {
 
   it("calls 'onTokenCreated' if defined as auth option", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .patchOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         {
@@ -961,7 +960,7 @@ describe("auth({ type: 'reset' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -977,7 +976,7 @@ describe("auth({ type: 'reset' })", () => {
 
   it("reset fails due to invalid token", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .patchOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         404,
@@ -1005,7 +1004,7 @@ describe("auth({ type: 'reset' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -1022,7 +1021,7 @@ describe("auth({ type: 'reset' })", () => {
 describe("auth({ type: 'delete' })", () => {
   it("invalidates authentication for successive calls", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         204,
@@ -1050,7 +1049,7 @@ describe("auth({ type: 'delete' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -1069,7 +1068,7 @@ describe("auth({ type: 'delete' })", () => {
 
   it("does not throw in case the token is already invalid", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce(
         "https://api.github.com/applications/1234567890abcdef1234/token",
         404,
@@ -1097,7 +1096,7 @@ describe("auth({ type: 'delete' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -1113,7 +1112,7 @@ describe("auth({ type: 'delete' })", () => {
 describe("auth({ type: 'deleteAuthorization' })", () => {
   it("invalidates authentication for successive calls", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce(
         "https://api.github.com/applications/1234567890abcdef1234/grant",
         204,
@@ -1141,7 +1140,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });
@@ -1160,7 +1159,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
 
   it("does not throw in case the token is already invalid", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce(
         "https://api.github.com/applications/1234567890abcdef1234/grant",
         404,
@@ -1188,7 +1187,7 @@ describe("auth({ type: 'deleteAuthorization' })", () => {
           "user-agent": "test",
         },
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       }),
     });

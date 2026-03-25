@@ -1,15 +1,12 @@
 import { describe, expect, it, test } from "vitest";
 import { Octokit } from "@octokit/core";
-import fetchMock from "fetch-mock";
+import fetchMock, { type RouteMatcher } from "fetch-mock";
 
 import { createOAuthUserAuth } from "../src/index.js";
 
 describe("Octokit + OAuth web flow", () => {
   it("README example", async () => {
-    const matchCreateTokenRequest: fetchMock.MockMatcherFunction = (
-      url,
-      options,
-    ) => {
+    const matchCreateTokenRequest: RouteMatcher = ({ url, options }) => {
       expect(url).toEqual("https://github.com/login/oauth/access_token");
       expect(options.headers).toEqual(
         expect.objectContaining({
@@ -21,10 +18,7 @@ describe("Octokit + OAuth web flow", () => {
       return true;
     };
 
-    const matchGetUserRequest: fetchMock.MockMatcherFunction = (
-      url,
-      options,
-    ) => {
+    const matchGetUserRequest: RouteMatcher = ({ url, options }) => {
       expect(url).toEqual("https://api.github.com/user");
       expect(options.headers).toEqual(
         expect.objectContaining({
@@ -37,7 +31,7 @@ describe("Octokit + OAuth web flow", () => {
     };
 
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(matchCreateTokenRequest, {
         access_token: "token123",
         scope: "",
@@ -55,7 +49,7 @@ describe("Octokit + OAuth web flow", () => {
         code: "code123",
       },
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -68,10 +62,7 @@ describe("Octokit + OAuth web flow", () => {
   });
 
   it("GitHub App auth", async () => {
-    const matchCreateTokenRequest: fetchMock.MockMatcherFunction = (
-      url,
-      options,
-    ) => {
+    const matchCreateTokenRequest: RouteMatcher = ({ url, options }) => {
       expect(url).toEqual("https://github.com/login/oauth/access_token");
       expect(options.headers).toEqual(
         expect.objectContaining({
@@ -83,10 +74,7 @@ describe("Octokit + OAuth web flow", () => {
       return true;
     };
 
-    const matchGetUserRequest: fetchMock.MockMatcherFunction = (
-      url,
-      options,
-    ) => {
+    const matchGetUserRequest: RouteMatcher = ({ url, options }) => {
       expect(url).toEqual("https://api.github.com/user");
       expect(options.headers).toEqual(
         expect.objectContaining({
@@ -99,7 +87,7 @@ describe("Octokit + OAuth web flow", () => {
     };
 
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(matchCreateTokenRequest, {
         access_token: "token123",
         scope: "",
@@ -118,7 +106,7 @@ describe("Octokit + OAuth web flow", () => {
         code: "code123",
       },
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -132,10 +120,7 @@ describe("Octokit + OAuth web flow", () => {
 });
 
 test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* requests", async () => {
-  const matchCheckTokenRequest: fetchMock.MockMatcherFunction = (
-    url,
-    options,
-  ) => {
+  const matchCheckTokenRequest: RouteMatcher = ({ url, options }) => {
     expect(url).toEqual(
       "https://api.github.com/applications/1234567890abcdef1234/token",
     );
@@ -153,7 +138,7 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
   };
 
   const mock = fetchMock
-    .sandbox()
+    .createInstance()
     .postOnce(matchCheckTokenRequest, { ok: true });
 
   const octokit = new Octokit({
@@ -164,7 +149,7 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
       code: "code123",
     },
     request: {
-      fetch: mock,
+      fetch: mock.fetchHandler,
     },
   });
 
@@ -182,10 +167,7 @@ test("Sets clientId/clientSecret as Basic auth for /authentication/{clientId}/* 
 });
 
 test("Sets no auth for OAuth Web flow requests", async () => {
-  const matchCreateTokenRequest: fetchMock.MockMatcherFunction = (
-    url,
-    options,
-  ) => {
+  const matchCreateTokenRequest: RouteMatcher = ({ url, options }) => {
     expect(url).toEqual("https://github.com/login/oauth/access_token");
     // @ts-ignore
     expect(options.headers.authorization).toBeUndefined();
@@ -194,7 +176,7 @@ test("Sets no auth for OAuth Web flow requests", async () => {
   };
 
   const mock = fetchMock
-    .sandbox()
+    .createInstance()
     .postOnce(matchCreateTokenRequest, { ok: true });
 
   const octokit = new Octokit({
@@ -205,7 +187,7 @@ test("Sets no auth for OAuth Web flow requests", async () => {
       code: "code123",
     },
     request: {
-      fetch: mock,
+      fetch: mock.fetchHandler,
     },
   });
 
