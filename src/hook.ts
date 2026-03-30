@@ -52,10 +52,9 @@ export async function hook(
   }
 
   // TS makes us do this ¯\_(ツ)_/¯
+  state.request = request;
   const { token } =
-    state.clientType === "oauth-app"
-      ? await auth({ ...state, request })
-      : await auth({ ...state, request });
+    state.clientType === "oauth-app" ? await auth(state) : await auth(state);
 
   endpoint.headers.authorization = "token " + token;
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it, test, vi } from "vitest";
 import { Octokit } from "@octokit/core";
 import fetchMock, { type RouteMatcher } from "fetch-mock";
 
@@ -203,4 +203,100 @@ test("Sets no auth for OAuth Web flow requests", async () => {
   );
 
   expect(data).toEqual({ ok: true });
+});
+
+test("Auto-refreshes expired GitHub App token once and reuses refreshed token for next request", async () => {
+  const onTokenCreated = vi.fn();
+
+  const matchRefreshRequest: RouteMatcher = ({ url, options }) => {
+    expect(url).toEqual("https://github.com/login/oauth/access_token");
+    expect(options.headers).toEqual(
+      expect.objectContaining({
+        accept: "application/json",
+        "content-type": "application/json; charset=utf-8",
+      }),
+    );
+    expect(JSON.parse(options.body as string)).toEqual({
+      client_id: "lv1.1234567890abcdef",
+      client_secret: "secret",
+      refresh_token: "r1.old-refresh-token",
+      grant_type: "refresh_token",
+    });
+
+    return true;
+  };
+
+  const matchGetUserRequestFirst: RouteMatcher = ({ url, options }) => {
+    expect(url).toEqual("https://api.github.com/user");
+    expect(options.headers).toEqual(
+      expect.objectContaining({
+        accept: "application/vnd.github.v3+json",
+        authorization: "token token456",
+      }),
+    );
+
+    return true;
+  };
+
+  const matchGetUserRequestSecond: RouteMatcher = ({ url, options }) => {
+    expect(url).toEqual("https://api.github.com/user");
+    expect(options.headers).toEqual(
+      expect.objectContaining({
+        accept: "application/vnd.github.v3+json",
+        authorization: "token token456",
+      }),
+    );
+
+    return true;
+  };
+
+  const mock = fetchMock
+    .createInstance()
+    .post(matchRefreshRequest, {
+      body: {
+        access_token: "token456",
+        scope: "",
+        token_type: "bearer",
+        expires_in: 28800,
+        refresh_token: "r1.new-refresh-token",
+        refresh_token_expires_in: 15897600,
+      },
+      headers: {
+        date: "Thu, 1 Jan 2099 00:00:00 GMT",
+      },
+    })
+    .getOnce(matchGetUserRequestFirst, {
+      login: "octocat",
+    })
+    .getOnce(matchGetUserRequestSecond, {
+      login: "octocat",
+    });
+
+  const octokit = new Octokit({
+    authStrategy: createOAuthUserAuth,
+    auth: {
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T00:00:00.000Z",
+      refreshToken: "r1.old-refresh-token",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+      onTokenCreated,
+    },
+    request: {
+      fetch: mock.fetchHandler,
+    },
+  });
+
+  const {
+    data: { login: login1 },
+  } = await octokit.request("GET /user");
+  const {
+    data: { login: login2 },
+  } = await octokit.request("GET /user");
+
+  expect(login1).toEqual("octocat");
+  expect(login2).toEqual("octocat");
+  expect(onTokenCreated).toHaveBeenCalledTimes(0);
 });
