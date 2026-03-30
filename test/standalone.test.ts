@@ -350,6 +350,8 @@ test("Caches authentication for successive calls", async () => {
 
 describe("refreshing tokens", () => {
   test("auto-refreshing for expiring tokens", async () => {
+    const onTokenCreated = vi.fn();
+
     const mock = fetchMock.createInstance().postOnce(
       ({ url, options }) => {
         expect(url).toEqual("https://github.com/login/oauth/access_token");
@@ -391,6 +393,7 @@ describe("refreshing tokens", () => {
       expiresAt: "1970-01-01T08:00:00.000Z",
       refreshToken: "r1.token123",
       refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+      onTokenCreated,
 
       // pass request mock for testing
       request: request.defaults({
@@ -416,12 +419,14 @@ describe("refreshing tokens", () => {
       expiresAt: "1970-01-01T08:00:00.000Z",
       refreshToken: "r1.token123",
       refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+      onTokenCreated,
     });
 
     // not yet expired
     MockDate.set("1970-01-01T05:00:00.000Z");
     const authentication2 = await auth();
     expect(authentication2).toEqual(authentication1);
+    expect(onTokenCreated).toHaveBeenCalledTimes(0);
 
     // expired
     MockDate.set("1970-01-01T10:00:00.000Z");
@@ -437,6 +442,10 @@ describe("refreshing tokens", () => {
       expiresAt: "1970-01-01T18:00:00.000Z",
       refreshToken: "r1.token456",
       refreshTokenExpiresAt: "1970-07-04T10:00:00.000Z",
+    });
+    expect(onTokenCreated).toHaveBeenCalledTimes(1);
+    expect(onTokenCreated).toHaveBeenNthCalledWith(1, authentication3, {
+      type: "refresh",
     });
 
     MockDate.reset();
