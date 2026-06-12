@@ -442,6 +442,77 @@ describe("refreshing tokens", () => {
     MockDate.reset();
   });
 
+  // Regression for #373. Before the fix, `onTokenCreated` only fired on an
+  // explicit `auth({ type: 'refresh' })` call. Tokens that auto-refreshed
+  // because they had expired did not fire the callback, so consumers who
+  // needed to persist refreshed tokens silently missed the auto-refresh
+  // case and lost auth state on subsequent requests.
+  test('auto-refresh on expiry fires "onTokenCreated()" callback', async () => {
+    const mock = fetchMock
+      .createInstance()
+      .postOnce(
+        ({ url }) => url === "https://github.com/login/oauth/access_token",
+        {
+          body: {
+            access_token: "token456",
+            scope: "",
+            token_type: "bearer",
+            expires_in: 28800,
+            refresh_token: "r1.token456",
+            refresh_token_expires_in: 15897600,
+          },
+          headers: {
+            date: "Thu, 1 Jan 1970 10:00:00 GMT",
+          },
+        },
+      );
+
+    const expectedAuthenticationObject = {
+      type: "token",
+      tokenType: "oauth",
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token456",
+      expiresAt: "1970-01-01T18:00:00.000Z",
+      refreshToken: "r1.token456",
+      refreshTokenExpiresAt: "1970-07-04T10:00:00.000Z",
+    };
+
+    const onTokenCreated = vi.fn();
+    const auth = createOAuthUserAuth({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "secret",
+      token: "token123",
+      expiresAt: "1970-01-01T08:00:00.000Z",
+      refreshToken: "r1.token123",
+      refreshTokenExpiresAt: "1970-07-04T00:00:00.000Z",
+      onTokenCreated,
+      request: request.defaults({
+        headers: { "user-agent": "test" },
+        request: { fetch: mock.fetchHandler },
+      }),
+    });
+
+    // The first call uses a still-valid token: no refresh, no callback.
+    MockDate.set("1970-01-01T05:00:00.000Z");
+    await auth();
+    expect(onTokenCreated).not.toHaveBeenCalled();
+
+    // The second call lands after the token's expiresAt: auto-refresh runs
+    // and the callback must fire so subscribers can persist the new token.
+    MockDate.set("1970-01-01T10:00:00.000Z");
+    const refreshed = await auth();
+    expect(refreshed).toEqual(expectedAuthenticationObject);
+    expect(onTokenCreated).toHaveBeenCalledTimes(1);
+    expect(onTokenCreated).toHaveBeenCalledWith(expectedAuthenticationObject, {
+      type: "refresh",
+    });
+
+    MockDate.reset();
+  });
+
   test('auth({ type: "refresh" })', async () => {
     const mock = fetchMock.createInstance().postOnce(
       ({ url, options }) => {
