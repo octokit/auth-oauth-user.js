@@ -66,6 +66,13 @@ export async function auth(
         type: "token",
         ...authentication,
       };
+      // Notify subscribers of the refreshed token. Previously this only fired
+      // for an explicit `auth({ type: 'refresh' })` call, so callers that
+      // wanted to persist refreshed tokens silently lost the auto-refresh-on-
+      // expiry case (#373).
+      await state.onTokenCreated?.(state.authentication, {
+        type: options.type ?? "refresh",
+      });
     }
   }
 
@@ -80,10 +87,6 @@ export async function auth(
     if (!currentAuthentication.hasOwnProperty("expiresAt")) {
       throw new Error("[@octokit/auth-oauth-user] Refresh token missing");
     }
-
-    await state.onTokenCreated?.(state.authentication, {
-      type: options.type,
-    });
   }
 
   // check or reset token
